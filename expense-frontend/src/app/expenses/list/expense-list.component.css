@@ -1,0 +1,113 @@
+.expense-list-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.controls-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.controls-row mat-form-field {
+  min-width: 200px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.table-card {
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.expense-table {
+  width: 100%;
+}
+
+.expense-table th {
+  font-weight: 600;
+  color: #333;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+.expense-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.expense-table tr:hover {
+  background-color: #f5f5f5;
+  transition: background-color 0.2s;
+}
+
+.total-row {
+  padding: 16px;
+  border-top: 2px solid #667eea;
+  text-align: right;
+  font-size: 16px;
+  color: #333;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #ccc;
+  margin: 0 auto 16px;
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: #999;
+  margin: 16px 0;
+}
+
+button {
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .expense-list-container {
+    padding: 16px;
+  }
+
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls-row mat-form-field {
+    min-width: unset;
+  }
+
+  .expense-table th,
+  .expense-table td {
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .displayedColumns {
+    font-size: 12px;
+  }
+}

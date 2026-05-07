@@ -1,0 +1,101 @@
+<div class="expense-list-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>Expenses</mat-card-title>
+      <mat-card-subtitle>View and manage your expenses</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="controls-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Month</mat-label>
+          <input matInput [matDatepicker]="picker" 
+                 [value]="selectedMonth" 
+                 (dateChange)="onMonthChange($event.value)"
+                 readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="createNewExpense()">
+          <mat-icon>add</mat-icon>
+          New Expense
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  @if (!isLoading && expenses.length > 0) {
+    <mat-card class="table-card">
+    <mat-card-content>
+      <table mat-table [dataSource]="expenses" class="expense-table">
+        <!-- Date Column -->
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Date</th>
+          <td mat-cell *matCellDef="let element">{{ formatDate(element.purchaseDate) }}</td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>Category</th>
+          <td mat-cell *matCellDef="let element">{{ element.category || 'Other' }}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let element">{{ element.description }}</td>
+        </ng-container>
+
+        <!-- Amount Column -->
+        <ng-container matColumnDef="amount">
+          <th mat-header-cell *matHeaderCellDef>Amount</th>
+          <td mat-cell *matCellDef="let element">{{ element.amount.toFixed(2) }}</td>
+        </ng-container>
+
+        <!-- Currency Column -->
+        <ng-container matColumnDef="currency">
+          <th mat-header-cell *matHeaderCellDef>Currency</th>
+          <td mat-cell *matCellDef="let element">{{ element.currency }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button color="primary" (click)="editExpense(element)" title="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteExpense(element)" title="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div class="total-row">
+        <strong>Total: {{ totalAmount.toFixed(2) }}</strong>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  }
+
+  @if (!isLoading && expenses.length === 0) {
+    <mat-card class="empty-state">
+    <mat-card-content>
+      <mat-icon class="empty-icon">inbox</mat-icon>
+      <p>No expenses for this month</p>
+      <button mat-raised-button color="primary" (click)="createNewExpense()">
+        Create First Expense
+      </button>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>

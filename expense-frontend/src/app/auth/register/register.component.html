@@ -1,0 +1,123 @@
+<div class="auth-container">
+  <mat-card class="auth-card">
+    <mat-card-header>
+      <mat-card-title>Create Account</mat-card-title>
+      <mat-card-subtitle>Sign up to start tracking expenses</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <!-- Full Name Field -->
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Full Name</mat-label>
+          <input 
+            matInput 
+            type="text" 
+            formControlName="fullName"
+            placeholder="John Doe"
+            required>
+          @if (registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched) {
+            <mat-error>{{ getFullNameErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Email Field -->
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Email</mat-label>
+          <input 
+            matInput 
+            type="email" 
+            formControlName="email"
+            placeholder="your.email@example.com"
+            required>
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <mat-error>{{ getEmailErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Password</mat-label>
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'" 
+            formControlName="password"
+            placeholder="Enter your password"
+            required>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            (click)="togglePasswordVisibility('password')" 
+            type="button">
+            @if (hidePassword) {
+              <mat-icon>visibility_off</mat-icon>
+            }
+            @if (!hidePassword) {
+              <mat-icon>visibility</mat-icon>
+            }
+          </button>
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <mat-error>{{ getPasswordErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Confirm Password Field -->
+        <mat-form-field class="full-width" appearance="outline">
+          <mat-label>Confirm Password</mat-label>
+          <input 
+            matInput 
+            [type]="hideConfirmPassword ? 'password' : 'text'" 
+            formControlName="confirmPassword"
+            placeholder="Confirm your password"
+            required>
+          <button 
+            mat-icon-button 
+            matSuffix 
+            (click)="togglePasswordVisibility('confirm')" 
+            type="button">
+            @if (hideConfirmPassword) {
+              <mat-icon>visibility_off</mat-icon>
+            }
+            @if (!hideConfirmPassword) {
+              <mat-icon>visibility</mat-icon>
+            }
+          </button>
+          @if ((registerForm.get('confirmPassword')?.invalid || registerForm.hasError('passwordMismatch')) && registerForm.get('confirmPassword')?.touched) {
+            <mat-error>{{ getConfirmPasswordErrorMessage() }}</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Terms & Conditions Checkbox -->
+        <div class="terms-checkbox">
+          <mat-checkbox formControlName="agreeToTerms">
+            I agree to the Terms of Service and Privacy Policy
+          </mat-checkbox>
+          @if (registerForm.get('agreeToTerms')?.invalid && registerForm.get('agreeToTerms')?.touched) {
+            <mat-error>You must agree to the terms</mat-error>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          mat-raised-button 
+          color="primary" 
+          class="full-width submit-button"
+          [disabled]="isLoading">
+          @if (isLoading) {
+            <mat-spinner diameter="20" class="spinner"></mat-spinner>
+          }
+          @if (!isLoading) {
+            <span>Create Account</span>
+          }
+        </button>
+      </form>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        <p>Already have an account? 
+          <a (click)="navigateToLogin()" class="link">Sign in</a>
+        </p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
