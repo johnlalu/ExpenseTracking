@@ -96,3 +96,4 @@ C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\refint\ExpenseApi.dll
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.pdb
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.genruntimeconfig.cache
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ref\ExpenseApi.dll
+C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.sourcelink.json

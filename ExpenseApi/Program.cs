@@ -8,6 +8,7 @@ using ExpenseApi.Data.Repository;
 using ExpenseApi.Middleware;
 using ExpenseApi.Services;
 using ExpenseApi.Validation;
+using ExpenseApi.Models.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// Add FluentValidation validators
+builder.Services.AddScoped<IValidator<RegisterRequest>, RegisterRequestValidator>();
+builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
+builder.Services.AddScoped<IValidator<CreateExpenseRequest>, CreateExpenseValidator>();
+builder.Services.AddScoped<IValidator<UpdateExpenseRequest>, UpdateExpenseValidator>();
+
 // Add CORS for Angular
 builder.Services.AddCors(options =>
 {
@@ -87,6 +94,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Register Cosmos DB context and repositories
 builder.Services.AddScoped<CosmosDbContext>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IExpenseRepository, ExpenseRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
@@ -113,5 +121,22 @@ app.MapControllers();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("Expense Reimbursement API starting up...");
+
+// Initialize database
+logger.LogInformation("Initializing Cosmos DB database and containers...");
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var cosmosDbContext = scope.ServiceProvider.GetRequiredService<CosmosDbContext>();
+        await cosmosDbContext.InitializeDatabaseAsync();
+    }
+    logger.LogInformation("Database initialization completed successfully");
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "Failed to initialize database");
+    throw;
+}
 
 app.Run();

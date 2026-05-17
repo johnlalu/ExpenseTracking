@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "TobvHc+7FRk=",
+  "dgSpecHash": "yN2puzHESWc=",
   "success": true,
   "projectFilePath": "C:\\Projects\\ExpenseTracking\\ExpenseApi\\ExpenseApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\johnl\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
     "C:\\Users\\johnl\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\johnl\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
-    "C:\\Users\\johnl\\.nuget\\packages\\bcrypt.net-next\\4.0.3\\bcrypt.net-next.4.0.3.nupkg.sha512",
+    "C:\\Users\\johnl\\.nuget\\packages\\bcrypt.net-next\\4.1.0\\bcrypt.net-next.4.1.0.nupkg.sha512",
     "C:\\Users\\johnl\\.nuget\\packages\\fluentvalidation\\11.11.0\\fluentvalidation.11.11.0.nupkg.sha512",
     "C:\\Users\\johnl\\.nuget\\packages\\microsoft.applicationinsights\\2.23.0\\microsoft.applicationinsights.2.23.0.nupkg.sha512",
     "C:\\Users\\johnl\\.nuget\\packages\\microsoft.applicationinsights.aspnetcore\\2.23.0\\microsoft.applicationinsights.aspnetcore.2.23.0.nupkg.sha512",

@@ -31,8 +31,10 @@ public class ExceptionHandlingMiddleware
         }
     }
 
-    private static Task HandleExceptionAsync(HttpContext context, Exception exception, string correlationId)
+    private Task HandleExceptionAsync(HttpContext context, Exception exception, string correlationId)
     {
+        _logger.LogError(exception, "Unhandled exception occurred. Correlation ID: {CorrelationId}", correlationId);
+        
         context.Response.ContentType = "application/json";
         
         var response = new ErrorResponse

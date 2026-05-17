@@ -4,6 +4,8 @@ import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { ExpenseListComponent } from './expenses/list/expense-list.component';
 import { ExpenseFormComponent } from './expenses/form/expense-form.component';
+import { ReportViewComponent } from './reports/report-view.component';
+import { CategoryListComponent } from './categories/category-list.component';
 
 export const routes: Routes = [
   {
@@ -61,14 +63,12 @@ export const routes: Routes = [
   {
     path: 'reports',
     canActivate: [AuthGuard],
-    // TODO: Create ReportViewComponent
-    component: undefined as any
+    component: ReportViewComponent
   },
   {
     path: 'categories',
     canActivate: [AuthGuard],
-    // TODO: Create CategoryListComponent
-    component: undefined as any
+    component: CategoryListComponent
   },
   {
     path: '**',
