@@ -1,5 +1,8 @@
 namespace ExpenseApi.Services;
 
+using BCrypt.Net;
+using ExpenseApi.Data.Repository;
+
 /// <summary>
 /// Service for user authentication and account management.
 /// </summary>
@@ -39,15 +42,18 @@ public class AuthService : IAuthService
     private readonly ILogger<AuthService> _logger;
     private readonly TokenService _tokenService;
     private readonly IConfiguration _configuration;
+    private readonly IUserRepository _userRepository;
 
     public AuthService(
         ILogger<AuthService> logger,
         TokenService tokenService,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IUserRepository userRepository)
     {
         _logger = logger;
         _tokenService = tokenService;
         _configuration = configuration;
+        _userRepository = userRepository;
     }
 
     /// <summary>
@@ -63,19 +69,27 @@ public class AuthService : IAuthService
                 return (false, "Email and password are required", null);
             }
 
-            // In a real scenario, check if user exists in database
-            // For now, we'll simulate the creation
+            // Check if user already exists
+            var existingUser = await _userRepository.GetByEmailAsync(request.Email);
+            if (existingUser != null)
+            {
+                _logger.LogWarning("Registration attempt for existing email: {Email}", request.Email);
+                return (false, "User with this email already exists", null);
+            }
+
+            // Create new user
             var user = new Models.User
             {
-                Id = Guid.NewGuid().ToString(),
                 Email = request.Email,
                 PasswordHash = HashPassword(request.Password),
+                FullName = request.Email.Split('@')[0], // Default to email prefix
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
+            var createdUser = await _userRepository.CreateAsync(user);
             _logger.LogInformation("User {Email} registered successfully", request.Email);
-            return (true, "Registration successful", user);
+            return (true, "Registration successful", createdUser);
         }
         catch (Exception ex)
         {
@@ -97,10 +111,8 @@ public class AuthService : IAuthService
                 return (false, "Email and password are required", null);
             }
 
-            // In a real scenario, fetch user from database
-            // For now, simulate a successful login
-            // This would be replaced with actual database lookup
-            var user = await GetUserByEmailAsync(request.Email);
+            // Fetch user from database
+            var user = await _userRepository.GetByEmailAsync(request.Email);
             
             if (user == null || !VerifyPassword(request.Password, user.PasswordHash ?? string.Empty))
             {
@@ -108,14 +120,21 @@ public class AuthService : IAuthService
                 return (false, "Invalid email or password", null);
             }
 
+            if (!user.IsActive)
+            {
+                _logger.LogWarning("Login attempt for inactive user {Email}", request.Email);
+                return (false, "User account is not active", null);
+            }
+
             // Generate tokens
             var accessToken = _tokenService.GenerateAccessToken(user.Id ?? string.Empty, user.Email ?? string.Empty);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            // In real scenario, save refresh token to database
+            // Update user with refresh token
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
             user.LastLoginAt = DateTime.UtcNow;
+            await _userRepository.UpdateAsync(user);
 
             var response = new Models.Responses.AuthResponse
             {
@@ -147,8 +166,8 @@ public class AuthService : IAuthService
                 return (false, "Refresh token and user ID are required", null);
             }
 
-            // In real scenario, verify refresh token against database
-            var user = await GetUserByIdAsync(userId);
+            // Get user from database
+            var user = await _userRepository.GetByIdAsync(userId);
             
             if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiresAt < DateTime.UtcNow)
             {
@@ -163,6 +182,7 @@ public class AuthService : IAuthService
             // Save new refresh token to database
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+            await _userRepository.UpdateAsync(user);
 
             var response = new Models.Responses.AuthResponse
             {
@@ -188,7 +208,7 @@ public class AuthService : IAuthService
     public string HashPassword(string password)
     {
         // Using BCrypt for password hashing
-        return BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
+        return BCrypt.HashPassword(password, workFactor: 12);
     }
 
     /// <summary>
@@ -198,34 +218,12 @@ public class AuthService : IAuthService
     {
         try
         {
-            return BCrypt.Net.BCrypt.Verify(password, hash);
+            return BCrypt.Verify(password, hash);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error verifying password");
             return false;
         }
-    }
-
-    /// <summary>
-    /// Get user by email (simulated - replace with actual DB call).
-    /// </summary>
-    private async Task<Models.User?> GetUserByEmailAsync(string email)
-    {
-        // TODO: Replace with actual database query
-        // For now, return null (user not found)
-        await Task.CompletedTask;
-        return null;
-    }
-
-    /// <summary>
-    /// Get user by ID (simulated - replace with actual DB call).
-    /// </summary>
-    private async Task<Models.User?> GetUserByIdAsync(string userId)
-    {
-        // TODO: Replace with actual database query
-        // For now, return null (user not found)
-        await Task.CompletedTask;
-        return null;
     }
 }

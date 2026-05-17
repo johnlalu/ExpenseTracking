@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Expense, CreateExpenseRequest, ExpenseListResponse, MonthlySummary } from '../models/expense.model';
+import { environment } from '../../../environments/environment';
 
 /**
  * Service for expense CRUD operations.
@@ -10,7 +11,7 @@ import { Expense, CreateExpenseRequest, ExpenseListResponse, MonthlySummary } fr
   providedIn: 'root'
 })
 export class ExpenseService {
-  private apiUrl = '/api/expenses';
+  private apiUrl = `${environment.apiUrl}/expenses`;
 
   constructor(private http: HttpClient) { }
 

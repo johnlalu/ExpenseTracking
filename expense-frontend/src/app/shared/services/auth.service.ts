@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuthResponse, LoginRequest, RegisterRequest, JwtPayload } from '../models/auth.model';
+import { environment } from '../../../environments/environment';
 
 /**
  * Authentication service managing user login/registration and token management.
@@ -11,7 +12,7 @@ import { AuthResponse, LoginRequest, RegisterRequest, JwtPayload } from '../mode
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = '/api/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<JwtPayload | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 

@@ -6,9 +6,14 @@ namespace ExpenseApi.Models;
 public class User
 {
     /// <summary>
-    /// Unique user identifier.
+    /// Unique user identifier (also serves as document ID in Cosmos DB).
     /// </summary>
     public string? Id { get; set; }
+
+    /// <summary>
+    /// User ID for partition key (same as Id).
+    /// </summary>
+    public string? UserId { get; set; }
 
     /// <summary>
     /// User's email address (unique).

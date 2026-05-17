@@ -51,15 +51,32 @@ public class CosmosDbContext
 
     /// <summary>
     /// Initialize Cosmos DB database and containers if they don't exist.
+    /// Uses shared throughput at database level to minimize RU/s requirements.
     /// </summary>
     public async Task InitializeDatabaseAsync()
     {
         try
         {
-            // Get or create database
-            var database = await _cosmosClient.CreateDatabaseIfNotExistsAsync(_databaseName);
+            Database database;
+            
+            // Try to get existing database first
+            try
+            {
+                var databaseResponse = await _cosmosClient.GetDatabase(_databaseName).ReadAsync();
+                database = databaseResponse.Database;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                // Database doesn't exist, create it with shared throughput
+                var throughputProperties = ThroughputProperties.CreateManualThroughput(400);
+                var createResponse = await _cosmosClient.CreateDatabaseIfNotExistsAsync(
+                    _databaseName,
+                    throughputProperties
+                );
+                database = createResponse.Database;
+            }
 
-            // Define container properties
+            // Define container properties (without individual throughput)
             var containerProperties = new[]
             {
                 new ContainerProperties
@@ -82,14 +99,14 @@ public class CosmosDbContext
             // Create containers if they don't exist
             foreach (var containerProp in containerProperties)
             {
-                await database.Database.CreateContainerIfNotExistsAsync(containerProp);
+                await database.CreateContainerIfNotExistsAsync(containerProp);
             }
         }
         catch (CosmosException ex)
         {
             if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                // Database or container already exists
+                // Database or container already exists - this is OK
             }
             else
             {
