@@ -1,0 +1,88 @@
+.categories-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header-card {
+  margin-bottom: 20px;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-card,
+.list-card {
+  min-height: 400px;
+}
+
+mat-form-field {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.categories-table {
+  width: 100%;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.default-badge {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.custom-badge {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.empty-state p {
+  font-size: 14px;
+}
+
+::ng-deep .button-spinner {
+  margin-right: 8px;
+}
