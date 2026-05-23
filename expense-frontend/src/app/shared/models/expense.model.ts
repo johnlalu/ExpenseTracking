@@ -40,8 +40,19 @@ export interface ExpenseListResponse {
  * Monthly summary for reporting.
  */
 export interface MonthlySummary {
-  month: string;
-  total: number;
-  categoryBreakdown: { [category: string]: number };
-  expenseCount: number;
+  month?: string;
+  total?: number;
+  totalAmount?: number;
+  categoryBreakdown?: { [category: string]: number };
+  expenseCount?: number;
+  count?: number;
+  items?: Expense[];
+}
+
+/**
+ * Category breakdown for reports.
+ */
+export interface CategoryBreakdown {
+  name: string;
+  totalAmount: number;
 }

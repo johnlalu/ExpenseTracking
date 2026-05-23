@@ -118,7 +118,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
     return this.expenses.reduce((sum, expense) => sum + expense.amount, 0);
   }
 
-  formatDate(date: any): string {
+  formatDate(date: string | Date | null | undefined): string {
     if (!date) return '';
     const d = new Date(date);
     return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { AppError, ErrorResponse } from '../models/error.model';
 
 /**
@@ -36,13 +37,16 @@ export class ErrorService {
   /**
    * Transform HTTP error response to AppError.
    */
-  handleHttpError(error: any): AppError {
-    const errorResponse = error.error as ErrorResponse;
-    return new AppError(
-      errorResponse.message || 'An unexpected error occurred',
-      errorResponse.logId,
-      errorResponse.statusCode,
-      errorResponse.details
-    );
+  handleHttpError(error: HttpErrorResponse | unknown): AppError {
+    if (error instanceof HttpErrorResponse) {
+      const errorResponse = (error.error as ErrorResponse) || {};
+      return new AppError(
+        errorResponse.message || 'An unexpected error occurred',
+        errorResponse.logId,
+        errorResponse.statusCode,
+        errorResponse.details
+      );
+    }
+    return new AppError('An unexpected error occurred', undefined, undefined, undefined);
   }
 }

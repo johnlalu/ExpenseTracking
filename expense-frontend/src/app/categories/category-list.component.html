@@ -1,0 +1,97 @@
+<div class="categories-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>Categories</mat-card-title>
+      <mat-card-subtitle>Manage your expense categories</mat-card-subtitle>
+    </mat-card-header>
+  </mat-card>
+
+  <div class="content-grid">
+    <!-- Add Category Form -->
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>Add New Category</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="categoryForm" (ngSubmit)="onAddCategory()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Category Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter category name" required>
+            @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
+              <mat-error>Category name is required</mat-error>
+            }
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" class="full-width" [disabled]="categoryForm.invalid || isSubmitting">
+            @if (!isSubmitting) {
+              <mat-icon>add</mat-icon>
+            }
+            @if (isSubmitting) {
+              <mat-spinner diameter="20" class="button-spinner"></mat-spinner>
+            }
+            Add Category
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Categories List -->
+    <mat-card class="list-card">
+      <mat-card-header>
+        <mat-card-title>Your Categories</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        @if (isLoading) {
+          <div class="loading-container">
+            <mat-spinner></mat-spinner>
+          </div>
+        }
+
+        @if (!isLoading && categories.length > 0) {
+          <table mat-table [dataSource]="categories" class="categories-table">
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+            </ng-container>
+
+            <!-- Type Column -->
+            <ng-container matColumnDef="type">
+              <th mat-header-cell *matHeaderCellDef>Type</th>
+              <td mat-cell *matCellDef="let element">
+                @if (element.isDefault) {
+                  <span class="badge default-badge">Default</span>
+                }
+                @if (!element.isDefault) {
+                  <span class="badge custom-badge">Custom</span>
+                }
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                @if (!element.isDefault) {
+                  <button mat-icon-button color="warn" (click)="onDeleteCategory(element)" title="Delete">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        }
+
+        @if (!isLoading && categories.length === 0) {
+          <div class="empty-state">
+            <mat-icon class="empty-icon">folder_open</mat-icon>
+            <p>No categories found</p>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

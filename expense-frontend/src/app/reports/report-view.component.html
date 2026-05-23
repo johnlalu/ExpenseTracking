@@ -1,0 +1,81 @@
+<div class="reports-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>Expense Reports</mat-card-title>
+      <mat-card-subtitle>View your monthly and category-wise expense summaries</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="controls-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Select Month</mat-label>
+          <input matInput [matDatepicker]="picker" 
+                 [value]="selectedMonth" 
+                 (dateChange)="onMonthChange($event.value)"
+                 readonly>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker startView="multi-year"></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  @if (!isLoading && summary) {
+    <mat-card class="summary-card">
+      <mat-card-header>
+        <mat-card-title>Monthly Summary</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="summary-row">
+          <div class="summary-item">
+            <span class="label">Total Expenses</span>
+            <span class="value">{{ ((summary.totalAmount ?? summary.total) || 0).toFixed(2) }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Number of Transactions</span>
+            <span class="value">{{ (summary.count ?? summary.expenseCount) || 0 }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="label">Average Amount</span>
+            <span class="value">{{ getAverageAmount().toFixed(2) }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    @if (categoryBreakdown && categoryBreakdown.length > 0) {
+      <mat-card class="breakdown-card">
+        <mat-card-header>
+          <mat-card-title>Category Breakdown</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="category-list">
+            @for (category of categoryBreakdown; track category.name) {
+              <div class="category-item">
+                <span class="category-name">{{ category.name }}</span>
+                <span class="category-amount">{{ category.totalAmount.toFixed(2) }}</span>
+                <div class="category-bar">
+                  <div class="progress-bar" [style.width.%]="getPercentage(category.totalAmount)"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+
+  @if (!isLoading && !summary) {
+    <mat-card class="empty-state">
+      <mat-card-content>
+        <mat-icon class="empty-icon">assessment</mat-icon>
+        <p>No expenses found for this period</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>

@@ -34,7 +34,7 @@
           <mat-form-field appearance="outline" class="half-width">
             <mat-label>Currency</mat-label>
             <mat-select formControlName="currency" required>
-              @for (currency of currencies) {
+              @for (currency of currencies; track currency) {
                 <mat-option [value]="currency">
                   {{ currency }}
                 </mat-option>
@@ -50,7 +50,7 @@
           <mat-form-field appearance="outline" class="half-width">
             <mat-label>Category</mat-label>
             <mat-select formControlName="category" required>
-              @for (category of categories) {
+              @for (category of categories; track category.name) {
                 <mat-option [value]="category.name">
                   {{ category.name }}
                 </mat-option>
