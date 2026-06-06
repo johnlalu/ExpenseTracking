@@ -35,20 +35,23 @@ public class CategoriesController : BaseController
         var userId = GetUserIdFromClaims();
         if (string.IsNullOrEmpty(userId))
         {
+            _logger.LogWarning("GetAllCategories called with null or empty userId");
             return Unauthorized();
         }
 
         try
         {
+            _logger.LogInformation($"Retrieving categories for user {userId}");
             var categories = await _categoryRepository.GetAllAsync(userId);
+            _logger.LogInformation($"Successfully retrieved {categories.Count} categories for user {userId}");
             return Ok(categories);
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Error retrieving categories: {ex.Message}");
+            _logger.LogError($"Error retrieving categories for user {userId}: {ex.GetType().Name} - {ex.Message}");
             return BadRequest(new ErrorResponse
             {
-                Message = "Error retrieving categories",
+                Message = $"Error retrieving categories: {ex.Message}",
                 StatusCode = 400,
                 LogId = HttpContext.TraceIdentifier
             });

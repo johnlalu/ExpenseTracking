@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run ExpenseApi Backend",
+			"type": "shell",
+			"command": "dotnet run",
+			"isBackground": true,
+			"group": "none"
+		}
+	]
+}

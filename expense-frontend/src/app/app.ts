@@ -39,8 +39,15 @@ export class App implements OnInit {
     // Subscribe to error notifications
     this.errorService.error$.subscribe(error => {
       if (error) {
-        this.snackBar.open(error.message, 'Close', {
-          duration: 5000,
+        let errorMessage = error.message;
+        if (error.details) {
+          const detailsStr = Object.entries(error.details)
+            .map(([key, values]) => `${key}: ${(values as string[]).join(', ')}`)
+            .join(' | ');
+          errorMessage = `${error.message} - ${detailsStr}`;
+        }
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 7000,
           panelClass: ['error-snackbar']
         });
       }

@@ -1,6 +1,45 @@
 @ExpenseApi_HostAddress = http://localhost:5143
+@ContentType = application/json
 
-GET {{ExpenseApi_HostAddress}}/weatherforecast/
-Accept: application/json
+### Register a new test user
+POST {{ExpenseApi_HostAddress}}/api/auth/register
+Content-Type: {{ContentType}}
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!",
+  "firstName": "Test",
+  "lastName": "User"
+}
+
+### Login to get JWT token
+# Save the token from response.accessToken and use below
+POST {{ExpenseApi_HostAddress}}/api/auth/login
+Content-Type: {{ContentType}}
+
+{
+  "email": "test@example.com",
+  "password": "TestPassword123!"
+}
+
+### Create a new expense (requires valid JWT token)
+# Copy the accessToken from login response and paste below
+POST {{ExpenseApi_HostAddress}}/api/expenses
+Content-Type: {{ContentType}}
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "description": "Office supplies for the project",
+  "amount": 49.99,
+  "currency": "USD",
+  "category": "Supplies",
+  "source": "Staples",
+  "purchaseDate": "2024-05-31",
+  "receiptUrl": "https://example.com/receipts/receipt123.pdf"
+}
+
+### Get all expenses for current user
+GET {{ExpenseApi_HostAddress}}/api/expenses?month=5&year=2024
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
 
 ###

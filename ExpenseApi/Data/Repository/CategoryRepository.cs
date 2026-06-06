@@ -24,6 +24,14 @@ public class CategoryRepository : ICategoryRepository
     {
         try
         {
+            _logger.LogInformation($"Fetching categories for user {userId}");
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("UserId is null or empty when fetching categories");
+                return new List<Category>();
+            }
+            
             var container = await _context.GetCategoriesContainerAsync();
             
             var query = container.GetItemLinqQueryable<Category>()
@@ -39,9 +47,12 @@ public class CategoryRepository : ICategoryRepository
                 categories.AddRange(response.ToList());
             }
             
+            _logger.LogInformation($"Found {categories.Count} existing categories for user {userId}");
+            
             // Add default categories if none exist
             if (categories.Count == 0)
             {
+                _logger.LogInformation($"No categories found for user {userId}, initializing defaults");
                 categories = await InitializeDefaultCategoriesAsync(userId);
             }
             
@@ -49,7 +60,12 @@ public class CategoryRepository : ICategoryRepository
         }
         catch (CosmosException ex)
         {
-            _logger.LogError($"Error getting categories for user {userId}: {ex.Message}");
+            _logger.LogError($"Cosmos DB Error getting categories for user {userId}: {ex.Message}, StatusCode: {ex.StatusCode}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Unexpected error getting categories for user {userId}: {ex.GetType().Name} - {ex.Message}");
             throw;
         }
     }
@@ -138,34 +154,50 @@ public class CategoryRepository : ICategoryRepository
             var container = await _context.GetCategoriesContainerAsync();
             var defaultCategories = AppConfig.DefaultCategories;
             
+            _logger.LogInformation($"Initializing {defaultCategories.Count} default categories for user {userId}");
+            
             var categories = new List<Category>();
             
             foreach (var categoryName in defaultCategories)
             {
-                var category = new Category
+                try
                 {
-                    Id = Guid.NewGuid().ToString(),
-                    UserId = userId,
-                    Name = categoryName,
-                    IsDefault = true,
-                    IsDeleted = false,
-                    CreatedAt = DateTime.UtcNow
-                };
-                
-                var response = await container.CreateItemAsync(
-                    category,
-                    new PartitionKey(userId)
-                );
-                
-                categories.Add(response.Resource);
+                    var category = new Category
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        UserId = userId,
+                        Name = categoryName,
+                        IsDefault = true,
+                        IsDeleted = false,
+                        CreatedAt = DateTime.UtcNow
+                    };
+                    
+                    var response = await container.CreateItemAsync(
+                        category,
+                        new PartitionKey(userId)
+                    );
+                    
+                    categories.Add(response.Resource);
+                    _logger.LogInformation($"Created default category '{categoryName}' for user {userId}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Failed to create category '{categoryName}': {ex.Message}");
+                    throw;
+                }
             }
             
-            _logger.LogInformation($"Default categories initialized for user {userId}");
+            _logger.LogInformation($"Successfully initialized {categories.Count} default categories for user {userId}");
             return categories;
         }
         catch (CosmosException ex)
         {
-            _logger.LogError($"Error initializing default categories: {ex.Message}");
+            _logger.LogError($"Cosmos DB Error initializing default categories: {ex.Message}, StatusCode: {ex.StatusCode}");
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Unexpected error initializing default categories: {ex.GetType().Name} - {ex.Message}");
             throw;
         }
     }

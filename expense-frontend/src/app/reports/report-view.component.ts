@@ -56,16 +56,23 @@ export class ReportViewComponent implements OnInit, OnDestroy {
 
   loadReport(): void {
     this.isLoading = true;
-    const month = this.selectedMonth.getMonth() + 1;
-    const year = this.selectedMonth.getFullYear();
 
-    this.expenseService.getMonthlySummary(month, year)
+    this.expenseService.getMonthlySummary()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data: MonthlySummary) => {
+        next: (data: MonthlySummary[]) => {
           this.isLoading = false;
-          this.summary = data;
-          this.categoryBreakdown = this.buildCategoryBreakdown(data);
+          // Filter for the selected month/year
+          const month = this.selectedMonth.getMonth() + 1;
+          const year = this.selectedMonth.getFullYear();
+          this.summary = data.find(m => 
+            m.month && m.month.includes(`${year}-${String(month).padStart(2, '0')}`)
+          ) || null;
+          if (this.summary) {
+            this.categoryBreakdown = this.buildCategoryBreakdown(this.summary);
+          } else {
+            this.categoryBreakdown = [];
+          }
         },
         error: (error: unknown) => {
           this.isLoading = false;
@@ -96,12 +103,14 @@ export class ReportViewComponent implements OnInit, OnDestroy {
   }
 
   getAverageAmount(): number {
-    if (!this.summary || this.summary.count === 0) return 0;
-    return this.summary.totalAmount / this.summary.count;
+    if (!this.summary || (this.summary.count ?? 0) === 0) return 0;
+    const totalAmount = this.summary.totalAmount ?? 0;
+    const count = this.summary.count ?? 0;
+    return totalAmount / count;
   }
 
   getPercentage(amount: number): number {
-    if (!this.summary || this.summary.totalAmount === 0) return 0;
-    return (amount / this.summary.totalAmount) * 100;
+    if (!this.summary || (this.summary.totalAmount ?? 0) === 0) return 0;
+    return (amount / (this.summary.totalAmount ?? 0)) * 100;
   }
 }

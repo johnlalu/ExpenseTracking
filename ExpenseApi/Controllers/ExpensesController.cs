@@ -77,6 +77,64 @@ public class ExpensesController : BaseController
     }
 
     /// <summary>
+    /// Get all expenses for the current user (optionally filtered by month/year).
+    /// </summary>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<ExpenseListResponse>> GetExpenses(
+        [FromQuery] int? month,
+        [FromQuery] int? year)
+    {
+        var userId = GetUserIdFromClaims();
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized();
+        }
+
+        try
+        {
+            if (!month.HasValue || !year.HasValue)
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    Message = "Month and year parameters are required",
+                    StatusCode = 400,
+                    LogId = HttpContext.TraceIdentifier
+                });
+            }
+
+            if (month < 1 || month > 12)
+            {
+                return BadRequest(new ErrorResponse
+                {
+                    Message = "Invalid month (1-12)",
+                    StatusCode = 400,
+                    LogId = HttpContext.TraceIdentifier
+                });
+            }
+
+            var expenses = await _expenseRepository.GetByMonthYearAsync(userId, month.Value, year.Value);
+            var response = new ExpenseListResponse
+            {
+                Items = expenses,
+                TotalCount = expenses.Count,
+                PageSize = expenses.Count
+            };
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error retrieving expenses: {ex.Message}");
+            return BadRequest(new ErrorResponse
+            {
+                Message = "Error retrieving expenses",
+                StatusCode = 400,
+                LogId = HttpContext.TraceIdentifier
+            });
+        }
+    }
+
+    /// <summary>
     /// Get expense by ID.
     /// </summary>
     [HttpGet("{id}")]

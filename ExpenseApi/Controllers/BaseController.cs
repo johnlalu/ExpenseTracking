@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ExpenseApi.Controllers;
 
@@ -15,7 +16,11 @@ public abstract class BaseController : ControllerBase
     /// </summary>
     protected string? GetUserId()
     {
-        return User.FindFirst("sub")?.Value ?? User.FindFirst("email")?.Value;
+        // Try multiple claim types to find the user ID
+        return User.FindFirst("sub")?.Value 
+            ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? User.FindFirst("email")?.Value 
+            ?? User.FindFirst(ClaimTypes.Email)?.Value;
     }
 
     /// <summary>
