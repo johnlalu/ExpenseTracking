@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -43,7 +43,8 @@ export class RegisterComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private errorService: ErrorService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -59,12 +60,31 @@ export class RegisterComponent implements OnInit, OnDestroy {
     this.registerForm = this.formBuilder.group({
       fullName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        this.passwordStrengthValidator.bind(this)
+      ]],
       confirmPassword: ['', [Validators.required]],
       agreeToTerms: [false, [Validators.requiredTrue]]
     }, {
       validators: this.passwordMatchValidator
     });
+  }
+
+  passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
+    const value = control.value;
+    if (!value) {
+      return null;
+    }
+
+    const hasUppercase = /[A-Z]/.test(value);
+    const hasLowercase = /[a-z]/.test(value);
+    const hasDigit = /[0-9]/.test(value);
+    const hasSpecialChar = /[^a-zA-Z0-9]/.test(value);
+
+    const passwordValid = hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
+    return passwordValid ? null : { passwordStrength: true };
   }
 
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -85,20 +105,29 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    const { fullName, email, password } = this.registerForm.value;
+    this.cdr.markForCheck();
+    const { fullName, email, password, confirmPassword } = this.registerForm.value;
 
-    const request: RegisterRequest = { email, password, fullName };
+    const request: RegisterRequest = { email, password, confirmPassword, fullName };
     this.authService.register(request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/expenses']);
         },
         error: (error) => {
-          this.isLoading = false;
-          const appError = this.errorService.handleHttpError(error);
-          this.errorService.setError(appError);
+          // Use setTimeout to defer the isLoading change to avoid ExpressionChangedAfterItHasBeenCheckedError
+          setTimeout(() => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            console.log('Registration error:', error);
+            console.log('Error response:', error.error);
+            const appError = this.errorService.handleHttpError(error);
+            console.log('AppError details:', appError.details);
+            this.errorService.setError(appError);
+          }, 0);
         }
       });
   }
@@ -143,7 +172,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
       return 'Password is required';
     }
     if (control?.hasError('minlength')) {
-      return 'Password must be at least 6 characters';
+      return 'Password must be at least 8 characters';
+    }
+    if (control?.hasError('passwordStrength')) {
+      return 'Password must contain uppercase, lowercase, digit, and special character';
     }
     return '';
   }

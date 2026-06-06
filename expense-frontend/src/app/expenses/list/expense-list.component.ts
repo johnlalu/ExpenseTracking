@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -53,7 +53,8 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
     private expenseService: ExpenseService,
     private errorService: ErrorService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +68,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
 
   loadExpenses(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     const month = this.selectedMonth.getMonth() + 1;
     const year = this.selectedMonth.getFullYear();
 
@@ -74,13 +76,19 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.isLoading = false;
-          this.expenses = response.items;
+          setTimeout(() => {
+            this.isLoading = false;
+            this.expenses = response.items;
+            this.cdr.markForCheck();
+          }, 0);
         },
         error: (error) => {
-          this.isLoading = false;
-          const appError = this.errorService.handleHttpError(error);
-          this.errorService.setError(appError);
+          setTimeout(() => {
+            this.isLoading = false;
+            this.cdr.markForCheck();
+            const appError = this.errorService.handleHttpError(error);
+            this.errorService.setError(appError);
+          }, 0);
         }
       });
   }

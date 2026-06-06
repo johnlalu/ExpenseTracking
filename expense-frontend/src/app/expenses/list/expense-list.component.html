@@ -29,7 +29,7 @@
     </div>
   }
 
-  @if (!isLoading && expenses.length > 0) {
+  @if (!isLoading && expenses && expenses.length > 0) {
     <mat-card class="table-card">
     <mat-card-content>
       <table mat-table [dataSource]="expenses" class="expense-table">
@@ -87,7 +87,7 @@
   </mat-card>
   }
 
-  @if (!isLoading && expenses.length === 0) {
+  @if (!isLoading && expenses && expenses.length === 0) {
     <mat-card class="empty-state">
     <mat-card-content>
       <mat-icon class="empty-icon">inbox</mat-icon>

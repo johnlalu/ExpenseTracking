@@ -1,7 +1,9 @@
 using System.Text;
+using System.IdentityModel.Tokens.Jwt;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Azure.Identity;
 using ExpenseApi;
 using ExpenseApi.Data;
 using ExpenseApi.Data.Repository;
@@ -12,8 +14,44 @@ using ExpenseApi.Models.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure Azure Key Vault integration (Production/Staging/Development)
+var environment = builder.Environment;
+var keyVaultUrl = builder.Configuration["KeyVault:VaultUrl"];
+var keyVaultEnabled = builder.Configuration.GetValue<bool>("KeyVault:Enabled");
+
+// Load from Key Vault if:
+// - Not in Development OR explicitly enabled in Development settings
+// - Key Vault URL is configured
+if ((!environment.IsDevelopment() || keyVaultEnabled) && !string.IsNullOrEmpty(keyVaultUrl))
+{
+    try
+    {
+        builder.Configuration.AddAzureKeyVault(
+            new Uri(keyVaultUrl),
+            new DefaultAzureCredential(new DefaultAzureCredentialOptions 
+            { 
+                ExcludeEnvironmentCredential = false,
+                ExcludeWorkloadIdentityCredential = false,
+                ExcludeManagedIdentityCredential = false,
+                ExcludeSharedTokenCacheCredential = true,
+                ExcludeVisualStudioCredential = true,
+                ExcludeAzureCliCredential = true,
+                ExcludeAzurePowerShellCredential = true
+            }));
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine($"Warning: Failed to load Azure Key Vault configuration: {ex.Message}");
+    }
+}
+
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    });
 
 // Configure JWT settings
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -35,9 +73,11 @@ builder.Services.AddLogging(logging =>
 });
 
 // Add Authentication with JWT Bearer
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -48,10 +88,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidAudience = jwtSettings.Audience,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.FromSeconds(5),
+            NameClaimType = System.Security.Claims.ClaimTypes.NameIdentifier,
+            RoleClaimType = System.Security.Claims.ClaimTypes.Role
         };
         options.Events = new JwtBearerEvents
         {
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError($"JWT Authentication failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
             OnChallenge = async context =>
             {
                 context.HandleResponse();
@@ -121,6 +169,16 @@ app.MapControllers();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 logger.LogInformation("Expense Reimbursement API starting up...");
+
+// Log configuration source
+if ((!environment.IsDevelopment() || keyVaultEnabled) && !string.IsNullOrEmpty(keyVaultUrl))
+{
+    logger.LogInformation("Configuration loaded from Azure Key Vault: {VaultUrl}", keyVaultUrl);
+}
+else if (environment.IsDevelopment())
+{
+    logger.LogInformation("Configuration loaded from appsettings.{Environment}.json", environment.EnvironmentName);
+}
 
 // Initialize database
 logger.LogInformation("Initializing Cosmos DB database and containers...");

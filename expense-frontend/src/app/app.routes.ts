@@ -41,7 +41,6 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [AuthGuard],
     redirectTo: '/expenses',
     pathMatch: 'full'
   },

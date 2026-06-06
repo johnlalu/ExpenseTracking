@@ -27,20 +27,71 @@
           "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll": {}
         }
       },
-      "Azure.Core/1.44.1": {
+      "Azure.Core/1.46.1": {
         "type": "package",
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
-          "System.ClientModel": "1.1.0",
-          "System.Memory.Data": "6.0.0"
+          "Microsoft.Bcl.AsyncInterfaces": "8.0.0",
+          "System.ClientModel": "1.4.1",
+          "System.Memory.Data": "6.0.1"
         },
         "compile": {
-          "lib/net6.0/Azure.Core.dll": {
+          "lib/net8.0/Azure.Core.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net6.0/Azure.Core.dll": {
+          "lib/net8.0/Azure.Core.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Azure.Extensions.AspNetCore.Configuration.Secrets/1.3.2": {
+        "type": "package",
+        "dependencies": {
+          "Azure.Core": "1.42.0",
+          "Azure.Security.KeyVault.Secrets": "4.6.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Azure.Extensions.AspNetCore.Configuration.Secrets.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Azure.Extensions.AspNetCore.Configuration.Secrets.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Azure.Identity/1.14.0": {
+        "type": "package",
+        "dependencies": {
+          "Azure.Core": "1.46.1",
+          "Microsoft.Identity.Client": "4.71.1",
+          "Microsoft.Identity.Client.Extensions.Msal": "4.71.1"
+        },
+        "compile": {
+          "lib/net8.0/Azure.Identity.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Azure.Identity.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Azure.Security.KeyVault.Secrets/4.7.0": {
+        "type": "package",
+        "dependencies": {
+          "Azure.Core": "1.44.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.dll": {
             "related": ".xml"
           }
         }
@@ -294,7 +345,7 @@
           }
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
+      "Microsoft.Bcl.AsyncInterfaces/8.0.0": {
         "type": "package",
         "compile": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
@@ -363,6 +414,39 @@
         "runtime": {
           "lib/netstandard2.0/Microsoft.Extensions.Logging.ApplicationInsights.dll": {
             "related": ".pdb;.xml"
+          }
+        }
+      },
+      "Microsoft.Identity.Client/4.71.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.IdentityModel.Abstractions": "6.35.0"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.Identity.Client.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Identity.Client.dll": {
+            "related": ".xml"
+          }
+        }
+      },
+      "Microsoft.Identity.Client.Extensions.Msal/4.71.1": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Identity.Client": "4.71.1",
+          "System.Security.Cryptography.ProtectedData": "4.5.0"
+        },
+        "compile": {
+          "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -682,18 +766,18 @@
           }
         }
       },
-      "System.ClientModel/1.1.0": {
+      "System.ClientModel/1.4.1": {
         "type": "package",
         "dependencies": {
-          "System.Memory.Data": "1.0.2"
+          "System.Memory.Data": "6.0.1"
         },
         "compile": {
-          "lib/net6.0/System.ClientModel.dll": {
+          "lib/net8.0/System.ClientModel.dll": {
             "related": ".xml"
           }
         },
         "runtime": {
-          "lib/net6.0/System.ClientModel.dll": {
+          "lib/net8.0/System.ClientModel.dll": {
             "related": ".xml"
           }
         }
@@ -808,7 +892,7 @@
           }
         }
       },
-      "System.Memory.Data/6.0.0": {
+      "System.Memory.Data/6.0.1": {
         "type": "package",
         "compile": {
           "lib/net6.0/System.Memory.Data.dll": {
@@ -919,26 +1003,78 @@
         "lib/netstandard2.1/AutoMapper.Extensions.Microsoft.DependencyInjection.dll"
       ]
     },
-    "Azure.Core/1.44.1": {
-      "sha512": "YyznXLQZCregzHvioip07/BkzjuWNXogJEVz9T5W6TwjNr17ax41YGzYMptlo2G10oLCuVPoyva62y0SIRDixg==",
+    "Azure.Core/1.46.1": {
+      "sha512": "iE5DPOlGsN5kCkF4gN+vasN1RihO0Ypie92oQ5tohQYiokmnrrhLnee+3zcE8n7vB6ZAzhPTfUGAEXX/qHGkYA==",
       "type": "package",
-      "path": "azure.core/1.44.1",
+      "path": "azure.core/1.46.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "CHANGELOG.md",
         "README.md",
-        "azure.core.1.44.1.nupkg.sha512",
+        "azure.core.1.46.1.nupkg.sha512",
         "azure.core.nuspec",
         "azureicon.png",
-        "lib/net461/Azure.Core.dll",
-        "lib/net461/Azure.Core.xml",
+        "lib/net462/Azure.Core.dll",
+        "lib/net462/Azure.Core.xml",
         "lib/net472/Azure.Core.dll",
         "lib/net472/Azure.Core.xml",
         "lib/net6.0/Azure.Core.dll",
         "lib/net6.0/Azure.Core.xml",
+        "lib/net8.0/Azure.Core.dll",
+        "lib/net8.0/Azure.Core.xml",
         "lib/netstandard2.0/Azure.Core.dll",
         "lib/netstandard2.0/Azure.Core.xml"
+      ]
+    },
+    "Azure.Extensions.AspNetCore.Configuration.Secrets/1.3.2": {
+      "sha512": "uMIU++B4XV4lW8+59rKi2Qph6tj2V7tHyLcwVR7OQRmA8cX0VVFhj2DyMahhoF9j4Jk99WA08Nsznd5RwC5Zfw==",
+      "type": "package",
+      "path": "azure.extensions.aspnetcore.configuration.secrets/1.3.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CHANGELOG.md",
+        "README.md",
+        "azure.extensions.aspnetcore.configuration.secrets.1.3.2.nupkg.sha512",
+        "azure.extensions.aspnetcore.configuration.secrets.nuspec",
+        "azureicon.png",
+        "lib/netstandard2.0/Azure.Extensions.AspNetCore.Configuration.Secrets.dll",
+        "lib/netstandard2.0/Azure.Extensions.AspNetCore.Configuration.Secrets.xml"
+      ]
+    },
+    "Azure.Identity/1.14.0": {
+      "sha512": "xQ6mpNhifb8W/KG2BclhbJWAupvE3JF8lPEBF8t59Q5sc1yN0Ci+dvS0qXtc6m9auxwYpmc8rhOmK541dcGwmA==",
+      "type": "package",
+      "path": "azure.identity/1.14.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CHANGELOG.md",
+        "README.md",
+        "azure.identity.1.14.0.nupkg.sha512",
+        "azure.identity.nuspec",
+        "azureicon.png",
+        "lib/net8.0/Azure.Identity.dll",
+        "lib/net8.0/Azure.Identity.xml",
+        "lib/netstandard2.0/Azure.Identity.dll",
+        "lib/netstandard2.0/Azure.Identity.xml"
+      ]
+    },
+    "Azure.Security.KeyVault.Secrets/4.7.0": {
+      "sha512": "uOPCojkm41V4dKTORyGzl3/f/lriKpxSQ43fWDn4StRJBVmbF1F/DNWJhwm207kCnqgE/W9+tskJSimIKHCZkw==",
+      "type": "package",
+      "path": "azure.security.keyvault.secrets/4.7.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "CHANGELOG.md",
+        "README.md",
+        "azure.security.keyvault.secrets.4.7.0.nupkg.sha512",
+        "azure.security.keyvault.secrets.nuspec",
+        "azureicon.png",
+        "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.dll",
+        "lib/netstandard2.0/Azure.Security.KeyVault.Secrets.xml"
       ]
     },
     "BCrypt.Net-Next/4.1.0": {
@@ -1193,23 +1329,26 @@
         "runtimes/win-x64/native/vcruntime140_1.dll"
       ]
     },
-    "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
-      "sha512": "UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
+    "Microsoft.Bcl.AsyncInterfaces/8.0.0": {
+      "sha512": "3WA9q9yVqJp222P3x1wYIGDAkpjAku0TMUaaQV22g6L67AI0LdOIrVS7Ht2vJfLHGSPVuqN94vIr15qn+HEkHw==",
       "type": "package",
-      "path": "microsoft.bcl.asyncinterfaces/6.0.0",
+      "path": "microsoft.bcl.asyncinterfaces/8.0.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "Icon.png",
         "LICENSE.TXT",
+        "PACKAGE.md",
         "THIRD-PARTY-NOTICES.TXT",
-        "lib/net461/Microsoft.Bcl.AsyncInterfaces.dll",
-        "lib/net461/Microsoft.Bcl.AsyncInterfaces.xml",
+        "buildTransitive/net461/Microsoft.Bcl.AsyncInterfaces.targets",
+        "buildTransitive/net462/_._",
+        "lib/net462/Microsoft.Bcl.AsyncInterfaces.dll",
+        "lib/net462/Microsoft.Bcl.AsyncInterfaces.xml",
         "lib/netstandard2.0/Microsoft.Bcl.AsyncInterfaces.dll",
         "lib/netstandard2.0/Microsoft.Bcl.AsyncInterfaces.xml",
         "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll",
         "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.xml",
-        "microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
+        "microsoft.bcl.asyncinterfaces.8.0.0.nupkg.sha512",
         "microsoft.bcl.asyncinterfaces.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -1309,6 +1448,47 @@
         "lib/netstandard2.0/Microsoft.Extensions.Logging.ApplicationInsights.xml",
         "microsoft.extensions.logging.applicationinsights.2.23.0.nupkg.sha512",
         "microsoft.extensions.logging.applicationinsights.nuspec"
+      ]
+    },
+    "Microsoft.Identity.Client/4.71.1": {
+      "sha512": "SgvSBcMRvmEEyV10pcvxNVUbwYoShmj/9pxXFVr3AFjE26IUzuwYLtLgt58xkEnT0xJBjfObaXxcol3BMtmEAg==",
+      "type": "package",
+      "path": "microsoft.identity.client/4.71.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net462/Microsoft.Identity.Client.dll",
+        "lib/net462/Microsoft.Identity.Client.xml",
+        "lib/net472/Microsoft.Identity.Client.dll",
+        "lib/net472/Microsoft.Identity.Client.xml",
+        "lib/net8.0-android34.0/Microsoft.Identity.Client.aar",
+        "lib/net8.0-android34.0/Microsoft.Identity.Client.dll",
+        "lib/net8.0-android34.0/Microsoft.Identity.Client.xml",
+        "lib/net8.0-ios18.0/Microsoft.Identity.Client.dll",
+        "lib/net8.0-ios18.0/Microsoft.Identity.Client.xml",
+        "lib/net8.0/Microsoft.Identity.Client.dll",
+        "lib/net8.0/Microsoft.Identity.Client.xml",
+        "lib/netstandard2.0/Microsoft.Identity.Client.dll",
+        "lib/netstandard2.0/Microsoft.Identity.Client.xml",
+        "microsoft.identity.client.4.71.1.nupkg.sha512",
+        "microsoft.identity.client.nuspec"
+      ]
+    },
+    "Microsoft.Identity.Client.Extensions.Msal/4.71.1": {
+      "sha512": "PGOHaoQhKBKnXy1kfW+Gu9/rxStKsqR+UZKeVv4XAsATdzmfj9y9kkUOftIjVFvxP3oh2Sk7v65ylS0K/qYADA==",
+      "type": "package",
+      "path": "microsoft.identity.client.extensions.msal/4.71.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "README.md",
+        "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.dll",
+        "lib/net8.0/Microsoft.Identity.Client.Extensions.Msal.xml",
+        "lib/netstandard2.0/Microsoft.Identity.Client.Extensions.Msal.dll",
+        "lib/netstandard2.0/Microsoft.Identity.Client.Extensions.Msal.xml",
+        "microsoft.identity.client.extensions.msal.4.71.1.nupkg.sha512",
+        "microsoft.identity.client.extensions.msal.nuspec"
       ]
     },
     "Microsoft.IdentityModel.Abstractions/8.2.0": {
@@ -1767,21 +1947,24 @@
         "serilog.sinks.file.nuspec"
       ]
     },
-    "System.ClientModel/1.1.0": {
-      "sha512": "UocOlCkxLZrG2CKMAAImPcldJTxeesHnHGHwhJ0pNlZEvEXcWKuQvVOER2/NiOkJGRJk978SNdw3j6/7O9H1lg==",
+    "System.ClientModel/1.4.1": {
+      "sha512": "MY7eFGKp+Hu7Ciub8wigQ0odGrkml4eTjUy8d5Bu2eGAVvm8Qskkq+YuXiiS5wMJGq7iSvqseV4skd5WxTUdDA==",
       "type": "package",
-      "path": "system.clientmodel/1.1.0",
+      "path": "system.clientmodel/1.4.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "CHANGELOG.md",
         "DotNetPackageIcon.png",
         "README.md",
+        "analyzers/dotnet/cs/System.ClientModel.SourceGeneration.dll",
         "lib/net6.0/System.ClientModel.dll",
         "lib/net6.0/System.ClientModel.xml",
+        "lib/net8.0/System.ClientModel.dll",
+        "lib/net8.0/System.ClientModel.xml",
         "lib/netstandard2.0/System.ClientModel.dll",
         "lib/netstandard2.0/System.ClientModel.xml",
-        "system.clientmodel.1.1.0.nupkg.sha512",
+        "system.clientmodel.1.4.1.nupkg.sha512",
         "system.clientmodel.nuspec"
       ]
     },
@@ -1945,10 +2128,10 @@
         "version.txt"
       ]
     },
-    "System.Memory.Data/6.0.0": {
-      "sha512": "ntFHArH3I4Lpjf5m4DCXQHJuGwWPNVJPaAvM95Jy/u+2Yzt2ryiyIN04LAogkjP9DeRcEOiviAjQotfmPq/FrQ==",
+    "System.Memory.Data/6.0.1": {
+      "sha512": "yliDgLh9S9Mcy5hBIdZmX6yphYIW3NH+3HN1kV1m7V1e0s7LNTw/tHNjJP4U9nSMEgl3w1TzYv/KA1Tg9NYy6w==",
       "type": "package",
-      "path": "system.memory.data/6.0.0",
+      "path": "system.memory.data/6.0.1",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -1963,7 +2146,7 @@
         "lib/net6.0/System.Memory.Data.xml",
         "lib/netstandard2.0/System.Memory.Data.dll",
         "lib/netstandard2.0/System.Memory.Data.xml",
-        "system.memory.data.6.0.0.nupkg.sha512",
+        "system.memory.data.6.0.1.nupkg.sha512",
         "system.memory.data.nuspec",
         "useSharedDesignerContext.txt"
       ]
@@ -2060,6 +2243,9 @@
     "net10.0": [
       "AutoMapper >= 12.0.1",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
+      "Azure.Extensions.AspNetCore.Configuration.Secrets >= 1.3.2",
+      "Azure.Identity >= 1.14.0",
+      "Azure.Security.KeyVault.Secrets >= 4.7.0",
       "BCrypt.Net-Next >= 4.1.0",
       "FluentValidation >= 11.11.0",
       "Microsoft.ApplicationInsights.AspNetCore >= 2.22.5",
@@ -2124,6 +2310,18 @@
           "AutoMapper.Extensions.Microsoft.DependencyInjection": {
             "target": "Package",
             "version": "[12.0.1, )"
+          },
+          "Azure.Extensions.AspNetCore.Configuration.Secrets": {
+            "target": "Package",
+            "version": "[1.3.2, )"
+          },
+          "Azure.Identity": {
+            "target": "Package",
+            "version": "[1.14.0, )"
+          },
+          "Azure.Security.KeyVault.Secrets": {
+            "target": "Package",
+            "version": "[4.7.0, )"
           },
           "BCrypt.Net-Next": {
             "target": "Package",

@@ -97,3 +97,8 @@ C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.pdb
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.genruntimeconfig.cache
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ref\ExpenseApi.dll
 C:\Projects\ExpenseTracking\ExpenseApi\obj\Debug\net10.0\ExpenseApi.sourcelink.json
+C:\Projects\ExpenseTracking\ExpenseApi\bin\Debug\net10.0\Azure.Extensions.AspNetCore.Configuration.Secrets.dll
+C:\Projects\ExpenseTracking\ExpenseApi\bin\Debug\net10.0\Azure.Identity.dll
+C:\Projects\ExpenseTracking\ExpenseApi\bin\Debug\net10.0\Azure.Security.KeyVault.Secrets.dll
+C:\Projects\ExpenseTracking\ExpenseApi\bin\Debug\net10.0\Microsoft.Identity.Client.dll
+C:\Projects\ExpenseTracking\ExpenseApi\bin\Debug\net10.0\Microsoft.Identity.Client.Extensions.Msal.dll

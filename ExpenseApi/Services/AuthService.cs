@@ -82,7 +82,7 @@ public class AuthService : IAuthService
             {
                 Email = request.Email,
                 PasswordHash = HashPassword(request.Password),
-                FullName = request.Email.Split('@')[0], // Default to email prefix
+                FullName = request.FullName ?? request.Email.Split('@')[0], // Use provided name or default to email prefix
                 IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
