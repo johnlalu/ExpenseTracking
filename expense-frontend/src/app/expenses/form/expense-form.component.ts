@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
@@ -58,7 +58,8 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private errorService: ErrorService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {
     this.expenseForm = this.createForm();
   }
@@ -104,12 +105,14 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
         next: (expense) => {
           this.isLoading = false;
           this.populateForm(expense);
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.isLoading = false;
           const appError = this.errorService.handleHttpError(error);
           this.errorService.setError(appError);
           this.router.navigate(['/expenses']);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -165,11 +168,13 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       next: () => {
         this.isSubmitting = false;
         this.router.navigate(['/expenses']);
+        this.cdr.markForCheck();
       },
       error: (error) => {
         this.isSubmitting = false;
         const appError = this.errorService.handleHttpError(error);
         this.errorService.setError(appError);
+        this.cdr.markForCheck();
       }
     });
   }

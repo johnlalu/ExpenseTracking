@@ -34,11 +34,11 @@
         <div class="summary-row">
           <div class="summary-item">
             <span class="label">Total Expenses</span>
-            <span class="value">{{ ((summary.totalAmount ?? summary.total) || 0).toFixed(2) }}</span>
+            <span class="value">{{ summary.totalAmount.toFixed(2) }}</span>
           </div>
           <div class="summary-item">
             <span class="label">Number of Transactions</span>
-            <span class="value">{{ (summary.count ?? summary.expenseCount) || 0 }}</span>
+            <span class="value">{{ summary.count }}</span>
           </div>
           <div class="summary-item">
             <span class="label">Average Amount</span>
