@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -44,7 +44,8 @@ export class CategoryListComponent implements OnInit, OnDestroy {
   constructor(
     private categoryService: CategoryService,
     private errorService: ErrorService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef
   ) {
     this.categoryForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2)]]
@@ -68,11 +69,13 @@ export class CategoryListComponent implements OnInit, OnDestroy {
         next: (categories: Category[]) => {
           this.isLoading = false;
           this.categories = categories;
+          this.cdr.markForCheck();
         },
         error: (error: any) => {
           this.isLoading = false;
           const appError = this.errorService.handleHttpError(error);
           this.errorService.setError(appError);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -92,11 +95,13 @@ export class CategoryListComponent implements OnInit, OnDestroy {
           this.isSubmitting = false;
           this.categories.push(newCategory);
           this.categoryForm.reset();
+          this.cdr.markForCheck();
         },
         error: (error: any) => {
           this.isSubmitting = false;
           const appError = this.errorService.handleHttpError(error);
           this.errorService.setError(appError);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -108,10 +113,12 @@ export class CategoryListComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.categories = this.categories.filter(c => c.id !== category.id);
+            this.cdr.markForCheck();
           },
           error: (error: any) => {
             const appError = this.errorService.handleHttpError(error);
             this.errorService.setError(appError);
+            this.cdr.markForCheck();
           }
         });
     }

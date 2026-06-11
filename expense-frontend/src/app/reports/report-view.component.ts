@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -13,7 +13,12 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ExpenseService } from '../shared/services/expense.service';
 import { ErrorService } from '../shared/services/error.service';
-import { MonthlySummary, CategoryBreakdown, Expense } from '../shared/models/expense.model';
+import { CategoryBreakdown, Expense } from '../shared/models/expense.model';
+
+interface ReportSummary {
+  totalAmount: number;
+  count: number;
+}
 
 @Component({
   selector: 'app-report-view',
@@ -36,13 +41,14 @@ import { MonthlySummary, CategoryBreakdown, Expense } from '../shared/models/exp
 export class ReportViewComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedMonth = new Date();
-  summary: MonthlySummary | null = null;
+  summary: ReportSummary | null = null;
   categoryBreakdown: CategoryBreakdown[] = [];
   destroy$ = new Subject<void>();
 
   constructor(
     private expenseService: ExpenseService,
-    private errorService: ErrorService
+    private errorService: ErrorService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -57,27 +63,30 @@ export class ReportViewComponent implements OnInit, OnDestroy {
   loadReport(): void {
     this.isLoading = true;
 
-    this.expenseService.getMonthlySummary()
+    const month = this.selectedMonth.getMonth() + 1;
+    const year = this.selectedMonth.getFullYear();
+
+    this.expenseService.getByMonth(month, year)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data: MonthlySummary[]) => {
+        next: (response) => {
           this.isLoading = false;
-          // Filter for the selected month/year
-          const month = this.selectedMonth.getMonth() + 1;
-          const year = this.selectedMonth.getFullYear();
-          this.summary = data.find(m => 
-            m.month && m.month.includes(`${year}-${String(month).padStart(2, '0')}`)
-          ) || null;
-          if (this.summary) {
-            this.categoryBreakdown = this.buildCategoryBreakdown(this.summary);
+          const items = response.items || [];
+          if (items.length > 0) {
+            const totalAmount = items.reduce((sum, e) => sum + e.amount, 0);
+            this.summary = { totalAmount, count: items.length };
+            this.categoryBreakdown = this.buildCategoryBreakdown(items);
           } else {
+            this.summary = null;
             this.categoryBreakdown = [];
           }
+          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.isLoading = false;
           const appError = this.errorService.handleHttpError(error);
           this.errorService.setError(appError);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -87,15 +96,12 @@ export class ReportViewComponent implements OnInit, OnDestroy {
     this.loadReport();
   }
 
-  buildCategoryBreakdown(summary: MonthlySummary): CategoryBreakdown[] {
-    // This would typically come from the API, but we'll parse it from expenses
+  buildCategoryBreakdown(items: Expense[]): CategoryBreakdown[] {
     const breakdown: { [key: string]: number } = {};
-    if (summary.items) {
-      summary.items.forEach((expense: Expense) => {
-        const category = expense.category || 'Other';
-        breakdown[category] = (breakdown[category] || 0) + expense.amount;
-      });
-    }
+    items.forEach((expense: Expense) => {
+      const category = expense.category || 'Other';
+      breakdown[category] = (breakdown[category] || 0) + expense.amount;
+    });
 
     return Object.entries(breakdown)
       .map(([name, totalAmount]) => ({ name, totalAmount }))
