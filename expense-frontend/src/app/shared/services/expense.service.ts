@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Expense, CreateExpenseRequest, ExpenseListResponse, MonthlySummary } from '../models/expense.model';
+import { Expense, CreateExpenseRequest, ExpenseListResponse } from '../models/expense.model';
 import { environment } from '../../../environments/environment';
 
 /**
@@ -51,13 +51,6 @@ export class ExpenseService {
    */
   delete(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
-  }
-
-  /**
-   * Get monthly summary for reporting.
-   */
-  getMonthlySummary(): Observable<MonthlySummary[]> {
-    return this.http.get<MonthlySummary[]>(`${this.apiUrl}/report/monthly`);
   }
 
   /**
