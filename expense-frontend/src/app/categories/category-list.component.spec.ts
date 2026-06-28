@@ -1,5 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CategoryListComponent } from './category-list.component';
 import { CategoryService } from '../shared/services/category.service';
@@ -10,8 +9,8 @@ import { Category } from '../shared/models/category.model';
 describe('CategoryListComponent', () => {
   let component: CategoryListComponent;
   let fixture: ComponentFixture<CategoryListComponent>;
-  let categoryService: jasmine.SpyObj<CategoryService>;
-  let errorService: jasmine.SpyObj<ErrorService>;
+  let categoryService: { getAll: ReturnType<typeof vi.fn>; create: ReturnType<typeof vi.fn>; delete: ReturnType<typeof vi.fn> };
+  let errorService: { handleHttpError: ReturnType<typeof vi.fn>; setError: ReturnType<typeof vi.fn> };
 
   const mockCategories: Category[] = [
     { id: '1', name: 'Groceries', isDefault: true },
@@ -19,43 +18,42 @@ describe('CategoryListComponent', () => {
   ];
 
   beforeEach(async () => {
-    const categoryServiceSpy = jasmine.createSpyObj('CategoryService', ['getAll', 'create', 'delete']);
-    const errorServiceSpy = jasmine.createSpyObj('ErrorService', ['handleHttpError', 'setError']);
+    categoryService = { getAll: vi.fn(), create: vi.fn(), delete: vi.fn() };
+    errorService = { handleHttpError: vi.fn(), setError: vi.fn() };
 
     await TestBed.configureTestingModule({
-      imports: [CategoryListComponent, ReactiveFormsModule, BrowserAnimationsModule],
+      imports: [CategoryListComponent, BrowserAnimationsModule],
       providers: [
-        { provide: CategoryService, useValue: categoryServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }
+        { provide: CategoryService, useValue: categoryService },
+        { provide: ErrorService, useValue: errorService }
       ]
     }).compileComponents();
-
-    categoryService = TestBed.inject(CategoryService) as jasmine.SpyObj<CategoryService>;
-    errorService = TestBed.inject(ErrorService) as jasmine.SpyObj<ErrorService>;
 
     fixture = TestBed.createComponent(CategoryListComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => {
+    categoryService.getAll.mockReturnValue(of([]));
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
   describe('ngOnInit', () => {
     it('should load categories on init', () => {
-      categoryService.getAll.and.returnValue(of(mockCategories));
+      categoryService.getAll.mockReturnValue(of(mockCategories));
 
       component.ngOnInit();
 
       expect(categoryService.getAll).toHaveBeenCalled();
       expect(component.categories).toEqual(mockCategories);
-      expect(component.isLoading).toBeFalse();
+      expect(component.isLoading).toBe(false);
     });
 
     it('should handle error when loading categories', () => {
       const error = { error: { message: 'Test error' } };
-      categoryService.getAll.and.returnValue(throwError(() => error));
-      errorService.handleHttpError.and.returnValue({ message: 'Test error' } as any);
+      categoryService.getAll.mockReturnValue(throwError(() => error));
+      errorService.handleHttpError.mockReturnValue({ message: 'Test error' });
 
       component.ngOnInit();
 
@@ -67,7 +65,7 @@ describe('CategoryListComponent', () => {
   describe('onAddCategory', () => {
     it('should add a new category when form is valid', () => {
       const newCategory: Category = { id: '3', name: 'Dining', isDefault: false };
-      categoryService.create.and.returnValue(of(newCategory));
+      categoryService.create.mockReturnValue(of(newCategory));
       component.categories = [...mockCategories];
 
       component.categoryForm.patchValue({ name: 'Dining' });
@@ -88,8 +86,8 @@ describe('CategoryListComponent', () => {
 
     it('should handle error when adding category', () => {
       const error = { error: { message: 'Test error' } };
-      categoryService.create.and.returnValue(throwError(() => error));
-      errorService.handleHttpError.and.returnValue({ message: 'Test error' } as any);
+      categoryService.create.mockReturnValue(throwError(() => error));
+      errorService.handleHttpError.mockReturnValue({ message: 'Test error' });
 
       component.categoryForm.patchValue({ name: 'Dining' });
       component.onAddCategory();
@@ -102,8 +100,8 @@ describe('CategoryListComponent', () => {
     it('should delete a category when confirmed', () => {
       const categoryToDelete = mockCategories[1];
       component.categories = [...mockCategories];
-      categoryService.delete.and.returnValue(of(void 0));
-      spyOn(window, 'confirm').and.returnValue(true);
+      categoryService.delete.mockReturnValue(of(void 0));
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
 
       component.onDeleteCategory(categoryToDelete);
 
@@ -115,7 +113,7 @@ describe('CategoryListComponent', () => {
     it('should not delete when user cancels confirmation', () => {
       const categoryToDelete = mockCategories[1];
       component.categories = [...mockCategories];
-      spyOn(window, 'confirm').and.returnValue(false);
+      vi.spyOn(window, 'confirm').mockReturnValue(false);
 
       component.onDeleteCategory(categoryToDelete);
 
@@ -127,17 +125,17 @@ describe('CategoryListComponent', () => {
   describe('Form validation', () => {
     it('should mark form as invalid when name is empty', () => {
       component.categoryForm.patchValue({ name: '' });
-      expect(component.categoryForm.invalid).toBeTrue();
+      expect(component.categoryForm.invalid).toBe(true);
     });
 
     it('should mark form as invalid when name is too short', () => {
       component.categoryForm.patchValue({ name: 'a' });
-      expect(component.categoryForm.invalid).toBeTrue();
+      expect(component.categoryForm.invalid).toBe(true);
     });
 
     it('should mark form as valid when name meets minimum length', () => {
       component.categoryForm.patchValue({ name: 'ab' });
-      expect(component.categoryForm.valid).toBeTrue();
+      expect(component.categoryForm.valid).toBe(true);
     });
   });
 });

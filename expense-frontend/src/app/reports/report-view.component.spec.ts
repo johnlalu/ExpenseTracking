@@ -4,65 +4,68 @@ import { ReportViewComponent } from './report-view.component';
 import { ExpenseService } from '../shared/services/expense.service';
 import { ErrorService } from '../shared/services/error.service';
 import { of, throwError } from 'rxjs';
-import { MonthlySummary, Expense } from '../shared/models/expense.model';
+import { Expense, ExpenseListResponse } from '../shared/models/expense.model';
 
 describe('ReportViewComponent', () => {
   let component: ReportViewComponent;
   let fixture: ComponentFixture<ReportViewComponent>;
-  let expenseService: jasmine.SpyObj<ExpenseService>;
-  let errorService: jasmine.SpyObj<ErrorService>;
+  let expenseService: { getByMonth: ReturnType<typeof vi.fn> };
+  let errorService: { handleHttpError: ReturnType<typeof vi.fn>; setError: ReturnType<typeof vi.fn> };
 
-  const mockSummary: MonthlySummary = {
-    month: '2024-05',
-    total: 1000,
-    totalAmount: 1000,
-    count: 10,
-    expenseCount: 10,
-    categoryBreakdown: { Groceries: 500, Entertainment: 300, Utilities: 200 },
-    items: [
-      { id: '1', description: 'Grocery shopping', amount: 100, currency: 'USD', category: 'Groceries', purchaseDate: new Date() },
-      { id: '2', description: 'Movie', amount: 15, currency: 'USD', category: 'Entertainment', purchaseDate: new Date() }
-    ]
-  };
+  const mockExpenses: Expense[] = [
+    { id: '1', description: 'Grocery shopping', amount: 400, currency: 'USD', category: 'Groceries', purchaseDate: new Date() },
+    { id: '2', description: 'Movie', amount: 15, currency: 'USD', category: 'Entertainment', purchaseDate: new Date() },
+    { id: '3', description: 'More groceries', amount: 100, currency: 'USD', category: 'Groceries', purchaseDate: new Date() }
+  ];
+
+  const mockResponse: ExpenseListResponse = { items: mockExpenses, totalCount: 3, pageSize: 50 };
 
   beforeEach(async () => {
-    const expenseServiceSpy = jasmine.createSpyObj('ExpenseService', ['getMonthlySummary']);
-    const errorServiceSpy = jasmine.createSpyObj('ErrorService', ['handleHttpError', 'setError']);
+    expenseService = { getByMonth: vi.fn() };
+    errorService = { handleHttpError: vi.fn(), setError: vi.fn() };
 
     await TestBed.configureTestingModule({
       imports: [ReportViewComponent, BrowserAnimationsModule],
       providers: [
-        { provide: ExpenseService, useValue: expenseServiceSpy },
-        { provide: ErrorService, useValue: errorServiceSpy }
+        { provide: ExpenseService, useValue: expenseService },
+        { provide: ErrorService, useValue: errorService }
       ]
     }).compileComponents();
-
-    expenseService = TestBed.inject(ExpenseService) as jasmine.SpyObj<ExpenseService>;
-    errorService = TestBed.inject(ErrorService) as jasmine.SpyObj<ErrorService>;
 
     fixture = TestBed.createComponent(ReportViewComponent);
     component = fixture.componentInstance;
   });
 
   it('should create', () => {
+    expenseService.getByMonth.mockReturnValue(of(mockResponse));
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
 
-  describe('ngOnInit', () => {
+  describe('loadReport', () => {
     it('should load report on init', () => {
-      expenseService.getMonthlySummary.and.returnValue(of(mockSummary));
+      expenseService.getByMonth.mockReturnValue(of(mockResponse));
 
       component.ngOnInit();
 
-      expect(expenseService.getMonthlySummary).toHaveBeenCalled();
-      expect(component.summary).toEqual(mockSummary);
-      expect(component.isLoading).toBeFalse();
+      expect(expenseService.getByMonth).toHaveBeenCalled();
+      expect(component.summary).toEqual({ totalAmount: 515, count: 3 });
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should set summary to null when no items returned', () => {
+      expenseService.getByMonth.mockReturnValue(of({ items: [], totalCount: 0, pageSize: 50 }));
+
+      component.ngOnInit();
+
+      expect(component.summary).toBeNull();
+      expect(component.categoryBreakdown).toEqual([]);
     });
 
     it('should handle error when loading report', () => {
       const error = { error: { message: 'Test error' } };
-      expenseService.getMonthlySummary.and.returnValue(throwError(() => error));
-      errorService.handleHttpError.and.returnValue({ message: 'Test error' } as any);
+      expenseService.getByMonth.mockReturnValue(throwError(() => error));
+      errorService.handleHttpError.mockReturnValue({ message: 'Test error' });
 
       component.ngOnInit();
 
@@ -72,90 +75,67 @@ describe('ReportViewComponent', () => {
   });
 
   describe('onMonthChange', () => {
-    it('should load report when month changes', () => {
-      expenseService.getMonthlySummary.and.returnValue(of(mockSummary));
-      const newDate = new Date(2024, 3, 15); // April 2024
+    it('should reload report when month changes', () => {
+      expenseService.getByMonth.mockReturnValue(of(mockResponse));
+      const newDate = new Date(2024, 3, 15);
 
       component.onMonthChange(newDate);
 
       expect(component.selectedMonth).toEqual(newDate);
-      expect(expenseService.getMonthlySummary).toHaveBeenCalled();
+      expect(expenseService.getByMonth).toHaveBeenCalledWith(4, 2024);
     });
   });
 
   describe('buildCategoryBreakdown', () => {
-    it('should build category breakdown from expenses', () => {
-      const breakdown = component.buildCategoryBreakdown(mockSummary);
-
-      expect(breakdown.length).toBeGreaterThan(0);
-      expect(breakdown.some(item => item.name === 'Groceries')).toBeTrue();
+    it('should group expenses by category', () => {
+      const breakdown = component.buildCategoryBreakdown(mockExpenses);
+      expect(breakdown.length).toBe(2);
+      expect(breakdown.some(item => item.name === 'Groceries')).toBe(true);
     });
 
     it('should sort categories by amount descending', () => {
-      const breakdown = component.buildCategoryBreakdown(mockSummary);
-
+      const breakdown = component.buildCategoryBreakdown(mockExpenses);
       for (let i = 0; i < breakdown.length - 1; i++) {
         expect(breakdown[i].totalAmount).toBeGreaterThanOrEqual(breakdown[i + 1].totalAmount);
       }
     });
 
-    it('should handle summary with no items', () => {
-      const emptySummary: MonthlySummary = { items: [] };
-      const breakdown = component.buildCategoryBreakdown(emptySummary);
-
-      expect(breakdown).toEqual([]);
+    it('should return empty array for no expenses', () => {
+      expect(component.buildCategoryBreakdown([])).toEqual([]);
     });
   });
 
   describe('getAverageAmount', () => {
     it('should calculate average amount correctly', () => {
-      component.summary = mockSummary;
-
-      const average = component.getAverageAmount();
-
-      expect(average).toBe(1000 / 10);
+      component.summary = { totalAmount: 1000, count: 10 };
+      expect(component.getAverageAmount()).toBe(100);
     });
 
     it('should return 0 when summary is null', () => {
       component.summary = null;
-
-      const average = component.getAverageAmount();
-
-      expect(average).toBe(0);
+      expect(component.getAverageAmount()).toBe(0);
     });
 
     it('should return 0 when count is 0', () => {
-      component.summary = { ...mockSummary, count: 0 };
-
-      const average = component.getAverageAmount();
-
-      expect(average).toBe(0);
+      component.summary = { totalAmount: 1000, count: 0 };
+      expect(component.getAverageAmount()).toBe(0);
     });
   });
 
   describe('getPercentage', () => {
     it('should calculate percentage correctly', () => {
-      component.summary = mockSummary;
-
-      const percentage = component.getPercentage(500);
-
-      expect(percentage).toBe(50); // 500/1000 * 100
+      component.summary = { totalAmount: 1000, count: 5 };
+      expect(component.getPercentage(500)).toBe(50);
     });
 
     it('should return 0 when summary is null', () => {
       component.summary = null;
-
-      const percentage = component.getPercentage(100);
-
-      expect(percentage).toBe(0);
+      expect(component.getPercentage(100)).toBe(0);
     });
 
     it('should return 0 when total amount is 0', () => {
-      component.summary = { ...mockSummary, totalAmount: 0 };
-
-      const percentage = component.getPercentage(100);
-
-      expect(percentage).toBe(0);
+      component.summary = { totalAmount: 0, count: 5 };
+      expect(component.getPercentage(100)).toBe(0);
     });
   });
 });
