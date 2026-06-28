@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.expensetracker.com/api'
+  apiUrl: 'https://expense-management-app.azurewebsites.net/api'
 };
