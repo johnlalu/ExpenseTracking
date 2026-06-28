@@ -75,3 +75,4 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: upload
           app_location: expense-frontend/dist/expense-frontend/browser
+          skip_app_build: true
