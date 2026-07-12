@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,8 @@ import { LoginRequest } from '../../shared/models/auth.model';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatIconModule
+    MatIconModule,
+    RouterLink
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -90,10 +91,6 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
-  }
-
-  navigateToRegister(): void {
-    this.router.navigate(['/auth/register']);
   }
 
   getEmailErrorMessage(): string {

@@ -26,7 +26,7 @@ export class ExpenseService {
    * Get expenses for a specific month.
    */
   getByMonth(month: number, year: number): Observable<ExpenseListResponse> {
-    let params = new HttpParams()
+    const params = new HttpParams()
       .set('month', month.toString())
       .set('year', year.toString());
     return this.http.get<ExpenseListResponse>(this.apiUrl, { params });

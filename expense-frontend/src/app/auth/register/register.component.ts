@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
@@ -27,7 +27,8 @@ import { RegisterRequest } from '../../shared/models/auth.model';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    RouterLink
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
@@ -138,10 +139,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
     } else {
       this.hideConfirmPassword = !this.hideConfirmPassword;
     }
-  }
-
-  navigateToLogin(): void {
-    this.router.navigate(['/auth/login']);
   }
 
   getFullNameErrorMessage(): string {

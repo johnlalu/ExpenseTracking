@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AppError, ErrorResponse } from '../models/error.model';
 

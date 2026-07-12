@@ -14,6 +14,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
+// eslint-disable-next-line @angular-eslint/component-class-suffix
 export class App implements OnInit {
   protected readonly title = signal('expense-frontend');
   isAuthenticated = false;

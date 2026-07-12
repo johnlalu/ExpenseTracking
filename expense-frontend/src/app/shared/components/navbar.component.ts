@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -126,13 +126,11 @@ import { AuthService } from '../services/auth.service';
     }
   `]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
-
-  ngOnInit(): void {}
 
   navigateTo(route: string): void {
     this.router.navigate([route]);

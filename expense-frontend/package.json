@@ -7,8 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "eslint src --ext .ts --ext .html",
-    "lint:fix": "eslint src --ext .ts --ext .html --fix"
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
