@@ -26,7 +26,12 @@ jobs:
         run: dotnet build ExpenseTracking.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ExpenseTracking.sln --configuration Release --no-build
+        run: dotnet test ExpenseTracking.sln --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+      - name: Coverage summary
+        run: |
+          echo "## Backend Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage data collected in TestResults/" >> $GITHUB_STEP_SUMMARY
 
       - name: Publish
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -65,7 +70,7 @@ jobs:
         run: npm run lint
 
       - name: Test
-        run: npm test -- --watch=false
+        run: npm run test:coverage
 
       - name: Build
         run: npm run build
