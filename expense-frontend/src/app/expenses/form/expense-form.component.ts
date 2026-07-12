@@ -80,7 +80,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: ['', [Validators.required, Validators.min(0.01)]],
       currency: ['USD', Validators.required],
       category: ['', Validators.required],
-      source: [''],
       purchaseDate: [new Date(), Validators.required]
     });
   }
@@ -137,7 +136,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: expense.amount,
       currency: expense.currency,
       category: expense.category,
-      source: expense.source,
       purchaseDate: new Date(expense.purchaseDate!)
     });
   }
@@ -156,7 +154,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: parseFloat(formValue.amount),
       currency: formValue.currency,
       category: formValue.category,
-      source: formValue.source,
       purchaseDate: formValue.purchaseDate
     };
 

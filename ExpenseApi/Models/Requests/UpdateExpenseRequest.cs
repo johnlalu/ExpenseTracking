@@ -26,11 +26,6 @@ public class UpdateExpenseRequest
     public string? Category { get; set; }
 
     /// <summary>
-    /// Source or vendor name.
-    /// </summary>
-    public string? Source { get; set; }
-
-    /// <summary>
     /// Date of purchase.
     /// </summary>
     public DateTime PurchaseDate { get; set; }

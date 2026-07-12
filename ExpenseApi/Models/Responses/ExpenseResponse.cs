@@ -31,11 +31,6 @@ public class ExpenseResponse
     public string? Category { get; set; }
 
     /// <summary>
-    /// Source or vendor.
-    /// </summary>
-    public string? Source { get; set; }
-
-    /// <summary>
     /// Date of purchase.
     /// </summary>
     public DateTime PurchaseDate { get; set; }

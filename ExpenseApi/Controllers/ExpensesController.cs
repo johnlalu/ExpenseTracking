@@ -54,7 +54,6 @@ public class ExpensesController : BaseController
                 Amount = request.Amount,
                 Currency = request.Currency ?? "USD",
                 Category = request.Category,
-                Source = request.Source,
                 PurchaseDate = request.PurchaseDate,
                 ReceiptUrl = request.ReceiptUrl
             };
@@ -319,7 +318,6 @@ public class ExpensesController : BaseController
             existingExpense.Description = request.Description ?? existingExpense.Description;
             existingExpense.Amount = request.Amount > 0 ? request.Amount : existingExpense.Amount;
             existingExpense.Category = request.Category ?? existingExpense.Category;
-            existingExpense.Source = request.Source ?? existingExpense.Source;
             existingExpense.PurchaseDate = request.PurchaseDate > DateTime.MinValue ? request.PurchaseDate : existingExpense.PurchaseDate;
             existingExpense.ReceiptUrl = request.ReceiptUrl ?? existingExpense.ReceiptUrl;
 

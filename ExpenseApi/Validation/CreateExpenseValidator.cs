@@ -29,7 +29,5 @@ public class CreateExpenseValidator : AbstractValidator<Models.Requests.CreateEx
             .NotEmpty().WithMessage("Purchase date is required")
             .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Purchase date cannot be in the future");
 
-        RuleFor(x => x.Source)
-            .MaximumLength(200).WithMessage("Source cannot exceed 200 characters");
     }
 }

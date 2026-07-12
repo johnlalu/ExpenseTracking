@@ -51,13 +51,6 @@ public class Expense
     public string? Category { get; set; }
 
     /// <summary>
-    /// Source or vendor of the expense.
-    /// </summary>
-    [JsonPropertyName("source")]
-    [JsonProperty("source")]
-    public string? Source { get; set; }
-
-    /// <summary>
     /// Date of purchase.
     /// </summary>
     [JsonPropertyName("purchaseDate")]

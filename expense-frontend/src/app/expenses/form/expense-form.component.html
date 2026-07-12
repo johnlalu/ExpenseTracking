@@ -46,26 +46,19 @@
           </mat-form-field>
         </div>
 
-        <div class="form-row">
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Category</mat-label>
-            <mat-select formControlName="category" required>
-              @for (category of categories; track category.name) {
-                <mat-option [value]="category.name">
-                  {{ category.name }}
-                </mat-option>
-              }
-            </mat-select>
-            @if (categoryError) {
-              <mat-error>{{ categoryError }}</mat-error>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category" required>
+            @for (category of categories; track category.name) {
+              <mat-option [value]="category.name">
+                {{ category.name }}
+              </mat-option>
             }
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="half-width">
-            <mat-label>Source</mat-label>
-            <input matInput formControlName="source" placeholder="e.g., Credit Card, Cash">
-          </mat-form-field>
-        </div>
+          </mat-select>
+          @if (categoryError) {
+            <mat-error>{{ categoryError }}</mat-error>
+          }
+        </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
           <mat-label>Purchase Date</mat-label>

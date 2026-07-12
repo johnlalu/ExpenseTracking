@@ -93,7 +93,7 @@ export class CategoryListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (newCategory: Category) => {
           this.isSubmitting = false;
-          this.categories.push(newCategory);
+          this.categories = [...this.categories, newCategory];
           this.categoryForm.reset();
           this.cdr.markForCheck();
         },

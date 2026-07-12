@@ -8,7 +8,6 @@ export interface Expense {
   amount: number;
   currency: string;
   category?: string;
-  source?: string;
   purchaseDate: Date;
   receiptUrl?: string;
   createdAt?: Date;
@@ -23,7 +22,6 @@ export interface CreateExpenseRequest {
   amount: number;
   currency: string;
   category?: string;
-  source?: string;
   purchaseDate: Date;
 }
 

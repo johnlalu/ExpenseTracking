@@ -120,6 +120,19 @@ describe('CategoryListComponent', () => {
       expect(categoryService.delete).not.toHaveBeenCalled();
       expect(component.categories.length).toBe(2);
     });
+
+    it('should allow deleting a default category', () => {
+      const defaultCategory = mockCategories[0];
+      component.categories = [...mockCategories];
+      categoryService.delete.mockReturnValue(of(void 0));
+      vi.spyOn(window, 'confirm').mockReturnValue(true);
+
+      component.onDeleteCategory(defaultCategory);
+
+      expect(categoryService.delete).toHaveBeenCalledWith(defaultCategory.id);
+      expect(component.categories.length).toBe(1);
+      expect(component.categories[0].id).toBe('2');
+    });
   });
 
   describe('Form validation', () => {

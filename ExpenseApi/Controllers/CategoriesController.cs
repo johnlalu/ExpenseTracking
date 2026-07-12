@@ -184,17 +184,6 @@ public class CategoriesController : BaseController
                 });
             }
 
-            // Prevent deletion of default categories
-            if (existingCategory.IsDefault)
-            {
-                return BadRequest(new ErrorResponse
-                {
-                    Message = "Cannot delete default categories",
-                    StatusCode = 400,
-                    LogId = HttpContext.TraceIdentifier
-                });
-            }
-
             await _categoryRepository.DeleteAsync(id, userId);
             _logger.LogInformation($"Category deleted: {id}");
 

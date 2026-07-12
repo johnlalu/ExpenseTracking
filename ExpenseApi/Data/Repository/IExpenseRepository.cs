@@ -44,4 +44,5 @@ public interface IExpenseRepository
     /// Get monthly summary aggregation.
     /// </summary>
     Task<Dictionary<string, decimal>> GetMonthlySummaryAsync(string userId);
+
 }
