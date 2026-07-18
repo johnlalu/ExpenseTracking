@@ -24,7 +24,8 @@ describe('ExpenseFormComponent', () => {
     amount: 75.50,
     currency: 'USD',
     category: 'Meals',
-    purchaseDate: new Date('2024-04-15')
+    purchaseDate: new Date('2024-04-15'),
+    paid: false
   };
 
   beforeEach(async () => {
@@ -67,6 +68,11 @@ describe('ExpenseFormComponent', () => {
       expect(component.expenseForm.get('purchaseDate')).toBeTruthy();
     });
 
+    it('should have paid control defaulting to false', () => {
+      expect(component.expenseForm.get('paid')).toBeTruthy();
+      expect(component.expenseForm.get('paid')!.value).toBe(false);
+    });
+
     it('should be invalid when empty', () => {
       component.expenseForm.reset();
       expect(component.expenseForm.invalid).toBe(true);
@@ -104,7 +110,25 @@ describe('ExpenseFormComponent', () => {
       expect(expenseService.create).toHaveBeenCalled();
       const requestArg = expenseService.create.mock.calls[0][0];
       expect(requestArg.source).toBeUndefined();
+      expect(requestArg.paid).toBe(false);
       expect(router.navigate).toHaveBeenCalledWith(['/expenses']);
+    });
+
+    it('should include paid: true in request when checked', () => {
+      expenseService.create.mockReturnValue(of(mockExpense));
+      component.expenseForm.patchValue({
+        description: 'Lunch',
+        amount: 20,
+        currency: 'USD',
+        category: 'Meals',
+        purchaseDate: new Date(),
+        paid: true
+      });
+
+      component.onSubmit();
+
+      const requestArg = expenseService.create.mock.calls[0][0];
+      expect(requestArg.paid).toBe(true);
     });
 
     it('should not submit when form is invalid', () => {
@@ -150,6 +174,16 @@ describe('ExpenseFormComponent', () => {
       expect(component.expenseForm.value.source).toBeUndefined();
     });
 
+    it('should populate paid field from expense', () => {
+      expect(component.expenseForm.get('paid')!.value).toBe(false);
+    });
+
+    it('should populate paid: true when expense is paid', () => {
+      expenseService.getById.mockReturnValue(of({ ...mockExpense, paid: true }));
+      routeParams$.next({ id: '2' });
+      expect(component.expenseForm.get('paid')!.value).toBe(true);
+    });
+
     it('should call update and navigate on valid submit', () => {
       expenseService.update.mockReturnValue(of(mockExpense));
 
@@ -157,6 +191,15 @@ describe('ExpenseFormComponent', () => {
 
       expect(expenseService.update).toHaveBeenCalledWith('1', expect.any(Object));
       expect(router.navigate).toHaveBeenCalledWith(['/expenses']);
+    });
+
+    it('should include paid in update request', () => {
+      expenseService.update.mockReturnValue(of(mockExpense));
+
+      component.onSubmit();
+
+      const requestArg = expenseService.update.mock.calls[0][1];
+      expect(requestArg.paid).toBeDefined();
     });
   });
 
