@@ -55,7 +55,8 @@ public class ExpensesController : BaseController
                 Currency = request.Currency ?? "USD",
                 Category = request.Category,
                 PurchaseDate = request.PurchaseDate,
-                ReceiptUrl = request.ReceiptUrl
+                ReceiptUrl = request.ReceiptUrl,
+                Paid = request.Paid
             };
 
             var createdExpense = await _expenseRepository.CreateAsync(expense);
@@ -320,6 +321,7 @@ public class ExpensesController : BaseController
             existingExpense.Category = request.Category ?? existingExpense.Category;
             existingExpense.PurchaseDate = request.PurchaseDate > DateTime.MinValue ? request.PurchaseDate : existingExpense.PurchaseDate;
             existingExpense.ReceiptUrl = request.ReceiptUrl ?? existingExpense.ReceiptUrl;
+            existingExpense.Paid = request.Paid;
 
             var updatedExpense = await _expenseRepository.UpdateAsync(id, userId, existingExpense);
             _logger.LogInformation($"Expense updated: {id}");

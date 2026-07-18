@@ -79,6 +79,13 @@ public class Expense
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     /// <summary>
+    /// Whether this expense has been paid/reimbursed.
+    /// </summary>
+    [JsonPropertyName("paid")]
+    [JsonProperty("paid")]
+    public bool Paid { get; set; }
+
+    /// <summary>
     /// Soft delete flag.
     /// </summary>
     [JsonPropertyName("isDeleted")]

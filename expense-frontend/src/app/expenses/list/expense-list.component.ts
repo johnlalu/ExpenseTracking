@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -12,15 +14,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { FormsModule } from '@angular/forms';
+import { MatSelectModule } from '@angular/material/select';
 import { MatCardModule } from '@angular/material/card';
 import { ExpenseService } from '../../shared/services/expense.service';
 import { ErrorService } from '../../shared/services/error.service';
-import { Expense } from '../../shared/models/expense.model';
+import { Expense, CreateExpenseRequest } from '../../shared/models/expense.model';
 
-/**
- * Component displaying list of user expenses with actions.
- */
+type PaidFilter = 'both' | 'paid' | 'unpaid';
+
 @Component({
   selector: 'app-expense-list',
   standalone: true,
@@ -29,6 +30,7 @@ import { Expense } from '../../shared/models/expense.model';
     FormsModule,
     MatTableModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatIconModule,
     MatDialogModule,
     MatProgressSpinnerModule,
@@ -36,6 +38,7 @@ import { Expense } from '../../shared/models/expense.model';
     MatNativeDateModule,
     MatFormFieldModule,
     MatInputModule,
+    MatSelectModule,
     MatCardModule
   ],
   templateUrl: './expense-list.component.html',
@@ -45,9 +48,10 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
   expenses: Expense[] = [];
   isLoading = false;
   selectedMonth = new Date();
+  paidFilter: PaidFilter = 'both';
   destroy$ = new Subject<void>();
 
-  displayedColumns: string[] = ['date', 'category', 'description', 'amount', 'currency', 'actions'];
+  displayedColumns: string[] = ['date', 'category', 'description', 'amount', 'currency', 'actions', 'paid'];
 
   constructor(
     private expenseService: ExpenseService,
@@ -98,6 +102,52 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
     this.loadExpenses();
   }
 
+  get filteredExpenses(): Expense[] {
+    if (this.paidFilter === 'paid') return this.expenses.filter(e => e.paid);
+    if (this.paidFilter === 'unpaid') return this.expenses.filter(e => !e.paid);
+    return this.expenses;
+  }
+
+  get allPaid(): boolean {
+    const visible = this.filteredExpenses;
+    return visible.length > 0 && visible.every(e => e.paid);
+  }
+
+  get somePaid(): boolean {
+    const visible = this.filteredExpenses;
+    return visible.some(e => e.paid) && !this.allPaid;
+  }
+
+  togglePaid(expense: Expense, paid: boolean): void {
+    const previous = expense.paid;
+    expense.paid = paid;
+    this.cdr.markForCheck();
+
+    const request: CreateExpenseRequest = {
+      description: expense.description,
+      amount: expense.amount,
+      currency: expense.currency,
+      category: expense.category,
+      purchaseDate: expense.purchaseDate,
+      paid
+    };
+
+    this.expenseService.update(expense.id!, request)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: (error) => {
+          expense.paid = previous;
+          this.cdr.markForCheck();
+          const appError = this.errorService.handleHttpError(error);
+          this.errorService.setError(appError);
+        }
+      });
+  }
+
+  toggleAll(paid: boolean): void {
+    this.filteredExpenses.forEach(expense => this.togglePaid(expense, paid));
+  }
+
   editExpense(expense: Expense): void {
     this.router.navigate(['/expenses', expense.id, 'edit']);
   }
@@ -123,7 +173,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
   }
 
   get totalAmount(): number {
-    return this.expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    return this.filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
   }
 
   formatDate(date: string | Date | null | undefined): string {

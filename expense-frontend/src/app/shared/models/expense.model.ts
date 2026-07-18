@@ -10,6 +10,7 @@ export interface Expense {
   category?: string;
   purchaseDate: Date;
   receiptUrl?: string;
+  paid?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -23,6 +24,7 @@ export interface CreateExpenseRequest {
   currency: string;
   category?: string;
   purchaseDate: Date;
+  paid?: boolean;
 }
 
 /**

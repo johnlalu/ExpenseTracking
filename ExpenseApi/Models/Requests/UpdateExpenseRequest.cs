@@ -34,4 +34,9 @@ public class UpdateExpenseRequest
     /// URL to receipt image in Blob Storage.
     /// </summary>
     public string? ReceiptUrl { get; set; }
+
+    /// <summary>
+    /// Whether this expense has been paid/reimbursed.
+    /// </summary>
+    public bool Paid { get; set; }
 }

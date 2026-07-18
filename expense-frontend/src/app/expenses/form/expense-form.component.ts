@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -36,7 +37,8 @@ import { Category } from '../../shared/models/category.model';
     MatProgressSpinnerModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckboxModule
   ],
   templateUrl: './expense-form.component.html',
   styleUrl: './expense-form.component.css'
@@ -80,7 +82,8 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: ['', [Validators.required, Validators.min(0.01)]],
       currency: ['USD', Validators.required],
       category: ['', Validators.required],
-      purchaseDate: [new Date(), Validators.required]
+      purchaseDate: [new Date(), Validators.required],
+      paid: [false]
     });
   }
 
@@ -136,7 +139,8 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: expense.amount,
       currency: expense.currency,
       category: expense.category,
-      purchaseDate: new Date(expense.purchaseDate!)
+      purchaseDate: new Date(expense.purchaseDate!),
+      paid: expense.paid ?? false
     });
   }
 
@@ -154,7 +158,8 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
       amount: parseFloat(formValue.amount),
       currency: formValue.currency,
       category: formValue.category,
-      purchaseDate: formValue.purchaseDate
+      purchaseDate: formValue.purchaseDate,
+      paid: formValue.paid ?? false
     };
 
     const operation = this.isEditMode

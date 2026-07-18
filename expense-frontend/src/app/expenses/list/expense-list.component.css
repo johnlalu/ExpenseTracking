@@ -20,6 +20,10 @@
   min-width: 200px;
 }
 
+.filter-field {
+  min-width: 150px;
+}
+
 .loading-container {
   display: flex;
   justify-content: center;
@@ -79,6 +83,17 @@
   font-size: 16px;
   color: #999;
   margin: 16px 0;
+}
+
+.paid-header {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.paid-cell {
+  text-align: center;
 }
 
 button {
