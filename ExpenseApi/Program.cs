@@ -125,11 +125,19 @@ builder.Services.AddScoped<IValidator<CreateExpenseRequest>, CreateExpenseValida
 builder.Services.AddScoped<IValidator<UpdateExpenseRequest>, UpdateExpenseValidator>();
 
 // Add CORS for Angular
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? [];
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+        policy.WithOrigins(
+                "http://localhost:4200",
+                "https://localhost:4200",
+                "https://purple-desert-02ae24b0f.7.azurestaticapps.net",
+                "https://lalumondier.com",
+                "https://www.lalumondier.com")
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
