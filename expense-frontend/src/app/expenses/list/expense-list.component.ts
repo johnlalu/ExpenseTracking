@@ -51,7 +51,7 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
   paidFilter: PaidFilter = 'unpaid';
   destroy$ = new Subject<void>();
 
-  displayedColumns: string[] = ['date', 'category', 'description', 'amount', 'actions', 'paid'];
+  displayedColumns: string[] = ['paid', 'date', 'category', 'description', 'amount', 'actions'];
 
   constructor(
     private expenseService: ExpenseService,
