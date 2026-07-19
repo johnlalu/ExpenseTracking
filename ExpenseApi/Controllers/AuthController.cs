@@ -115,23 +115,9 @@ public class AuthController : BaseController
     [HttpPost("refresh")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> RefreshToken([FromBody] dynamic request)
+    public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
     {
-        // Get user ID from current claims
-        var userId = GetUserId();
-        if (string.IsNullOrEmpty(userId))
-        {
-            return Unauthorized(new ErrorResponse
-            {
-                Message = "User not authenticated",
-                StatusCode = 401,
-                LogId = HttpContext.TraceIdentifier
-            });
-        }
-
-        // Extract refresh token from request body
-        string? refreshToken = request?.refreshToken;
-        if (string.IsNullOrEmpty(refreshToken))
+        if (string.IsNullOrEmpty(request?.RefreshToken))
         {
             return BadRequest(new ErrorResponse
             {
@@ -141,11 +127,10 @@ public class AuthController : BaseController
             });
         }
 
-        // Attempt token refresh
-        var (success, message, response) = await _authService.RefreshTokenAsync(refreshToken, userId);
+        var (success, message, response) = await _authService.RefreshTokenAsync(request.RefreshToken);
         if (!success)
         {
-            _logger.LogWarning("Token refresh failed for user {UserId}: {Message}", userId, message);
+            _logger.LogWarning("Token refresh failed: {Message}", message);
             return Unauthorized(new ErrorResponse
             {
                 Message = message,

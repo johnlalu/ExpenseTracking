@@ -42,7 +42,7 @@ export class AuthService {
    * Refresh access token using refresh token.
    */
   refreshToken(): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, {}).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { refreshToken: this.getRefreshToken() }).pipe(
       tap(response => this.storeTokens(response))
     );
   }

@@ -21,7 +21,7 @@ public interface IAuthService
     /// <summary>
     /// Refresh access token using refresh token.
     /// </summary>
-    Task<(bool Success, string? Message, Models.Responses.AuthResponse? Response)> RefreshTokenAsync(string refreshToken, string userId);
+    Task<(bool Success, string? Message, Models.Responses.AuthResponse? Response)> RefreshTokenAsync(string refreshToken);
 
     /// <summary>
     /// Verify a user's password.
@@ -141,7 +141,7 @@ public class AuthService : IAuthService
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
                 Email = user.Email,
-                ExpiresIn = 900 // 15 minutes
+                ExpiresIn = 3600 // 15 minutes
             };
 
             _logger.LogInformation("User {Email} logged in successfully", request.Email);
@@ -157,21 +157,21 @@ public class AuthService : IAuthService
     /// <summary>
     /// Refresh access token using refresh token.
     /// </summary>
-    public async Task<(bool Success, string? Message, Models.Responses.AuthResponse? Response)> RefreshTokenAsync(string refreshToken, string userId)
+    public async Task<(bool Success, string? Message, Models.Responses.AuthResponse? Response)> RefreshTokenAsync(string refreshToken)
     {
         try
         {
-            if (string.IsNullOrEmpty(refreshToken) || string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(refreshToken))
             {
-                return (false, "Refresh token and user ID are required", null);
+                return (false, "Refresh token is required", null);
             }
 
-            // Get user from database
-            var user = await _userRepository.GetByIdAsync(userId);
-            
-            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiresAt < DateTime.UtcNow)
+            // Look up user by refresh token — no expired access token needed
+            var user = await _userRepository.GetByRefreshTokenAsync(refreshToken);
+
+            if (user == null || user.RefreshTokenExpiresAt < DateTime.UtcNow)
             {
-                _logger.LogWarning("Invalid refresh token for user {UserId}", userId);
+                _logger.LogWarning("Invalid or expired refresh token");
                 return (false, "Invalid or expired refresh token", null);
             }
 
@@ -189,15 +189,15 @@ public class AuthService : IAuthService
                 AccessToken = newAccessToken,
                 RefreshToken = newRefreshToken,
                 Email = user.Email,
-                ExpiresIn = 900
+                ExpiresIn = 3600
             };
 
-            _logger.LogInformation("Token refreshed for user {UserId}", userId);
+            _logger.LogInformation("Token refreshed for user {UserId}", user.Id);
             return (true, "Token refresh successful", response);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error refreshing token for user {UserId}", userId);
+            _logger.LogError(ex, "Error refreshing token");
             return (false, "An error occurred during token refresh", null);
         }
     }

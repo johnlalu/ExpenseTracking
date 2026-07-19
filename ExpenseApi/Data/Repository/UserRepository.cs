@@ -122,4 +122,31 @@ public class UserRepository : IUserRepository
             throw;
         }
     }
+
+    public async Task<Models.User?> GetByRefreshTokenAsync(string refreshToken)
+    {
+        try
+        {
+            var container = await _context.GetUsersContainerAsync();
+
+            var query = container.GetItemLinqQueryable<Models.User>()
+                .Where(u => u.RefreshToken == refreshToken)
+                .Take(1);
+
+            var iterator = query.ToFeedIterator();
+
+            if (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync();
+                return response.FirstOrDefault();
+            }
+
+            return null;
+        }
+        catch (CosmosException ex)
+        {
+            _logger.LogError($"Error getting user by refresh token: {ex.Message}");
+            throw;
+        }
+    }
 }

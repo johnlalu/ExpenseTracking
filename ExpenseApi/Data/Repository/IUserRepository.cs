@@ -29,4 +29,9 @@ public interface IUserRepository
     /// Check if user exists by email.
     /// </summary>
     Task<bool> ExistsByEmailAsync(string email);
+
+    /// <summary>
+    /// Get user by refresh token.
+    /// </summary>
+    Task<Models.User?> GetByRefreshTokenAsync(string refreshToken);
 }
