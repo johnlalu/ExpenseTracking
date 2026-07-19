@@ -21,11 +21,6 @@ public class ExpenseResponse
     public decimal Amount { get; set; }
 
     /// <summary>
-    /// Currency code.
-    /// </summary>
-    public string Currency { get; set; } = "USD";
-
-    /// <summary>
     /// Category of the expense.
     /// </summary>
     public string? Category { get; set; }

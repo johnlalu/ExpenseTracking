@@ -16,11 +16,6 @@ public class CreateExpenseRequest
     public decimal Amount { get; set; }
 
     /// <summary>
-    /// Currency code (default: USD).
-    /// </summary>
-    public string Currency { get; set; } = "USD";
-
-    /// <summary>
     /// Category of the expense.
     /// </summary>
     public string? Category { get; set; }

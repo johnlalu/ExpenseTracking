@@ -6,7 +6,6 @@ export interface Expense {
   userId?: string;
   description?: string;
   amount: number;
-  currency: string;
   category?: string;
   purchaseDate: Date;
   receiptUrl?: string;
@@ -21,7 +20,6 @@ export interface Expense {
 export interface CreateExpenseRequest {
   description?: string;
   amount: number;
-  currency: string;
   category?: string;
   purchaseDate: Date;
   paid?: boolean;

@@ -52,8 +52,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
   isEditMode = false;
   destroy$ = new Subject<void>();
 
-  currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD'];
-
   constructor(
     private formBuilder: FormBuilder,
     private expenseService: ExpenseService,
@@ -80,7 +78,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
     return this.formBuilder.group({
       description: ['', Validators.required],
       amount: ['', [Validators.required, Validators.min(0.01)]],
-      currency: ['USD', Validators.required],
       category: ['', Validators.required],
       purchaseDate: [new Date(), Validators.required],
       paid: [false]
@@ -137,7 +134,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
     this.expenseForm.patchValue({
       description: expense.description,
       amount: expense.amount,
-      currency: expense.currency,
       category: expense.category,
       purchaseDate: new Date(expense.purchaseDate!),
       paid: expense.paid ?? false
@@ -156,7 +152,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
     const request: CreateExpenseRequest = {
       description: formValue.description,
       amount: parseFloat(formValue.amount),
-      currency: formValue.currency,
       category: formValue.category,
       purchaseDate: formValue.purchaseDate,
       paid: formValue.paid ?? false
@@ -219,14 +214,6 @@ export class ExpenseFormComponent implements OnInit, OnDestroy {
     const control = this.expenseForm.get('category');
     if (control?.hasError('required') && control?.touched) {
       return 'Category is required';
-    }
-    return '';
-  }
-
-  get currencyError(): string {
-    const control = this.expenseForm.get('currency');
-    if (control?.hasError('required') && control?.touched) {
-      return 'Currency is required';
     }
     return '';
   }

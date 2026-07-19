@@ -22,7 +22,6 @@ describe('ExpenseFormComponent', () => {
     id: '1',
     description: 'Team lunch',
     amount: 75.50,
-    currency: 'USD',
     category: 'Meals',
     purchaseDate: new Date('2024-04-15'),
     paid: false
@@ -63,7 +62,6 @@ describe('ExpenseFormComponent', () => {
     it('should have required fields', () => {
       expect(component.expenseForm.get('description')).toBeTruthy();
       expect(component.expenseForm.get('amount')).toBeTruthy();
-      expect(component.expenseForm.get('currency')).toBeTruthy();
       expect(component.expenseForm.get('category')).toBeTruthy();
       expect(component.expenseForm.get('purchaseDate')).toBeTruthy();
     });
@@ -82,7 +80,6 @@ describe('ExpenseFormComponent', () => {
       component.expenseForm.patchValue({
         description: 'Lunch',
         amount: 20,
-        currency: 'USD',
         category: 'Meals',
         purchaseDate: new Date()
       });
@@ -100,7 +97,6 @@ describe('ExpenseFormComponent', () => {
       component.expenseForm.patchValue({
         description: 'Team lunch',
         amount: 75.50,
-        currency: 'USD',
         category: 'Meals',
         purchaseDate: new Date()
       });
@@ -119,7 +115,6 @@ describe('ExpenseFormComponent', () => {
       component.expenseForm.patchValue({
         description: 'Lunch',
         amount: 20,
-        currency: 'USD',
         category: 'Meals',
         purchaseDate: new Date(),
         paid: true
@@ -144,7 +139,6 @@ describe('ExpenseFormComponent', () => {
       component.expenseForm.patchValue({
         description: 'Lunch',
         amount: 20,
-        currency: 'USD',
         category: 'Meals',
         purchaseDate: new Date()
       });
@@ -172,6 +166,7 @@ describe('ExpenseFormComponent', () => {
       expect(component.expenseForm.value.amount).toBe(75.50);
       expect(component.expenseForm.value.category).toBe('Meals');
       expect(component.expenseForm.value.source).toBeUndefined();
+      expect(component.expenseForm.value.currency).toBeUndefined();
     });
 
     it('should populate paid field from expense', () => {

@@ -37,13 +37,6 @@ public class Expense
     public decimal Amount { get; set; }
 
     /// <summary>
-    /// Currency code (e.g., USD, EUR).
-    /// </summary>
-    [JsonPropertyName("currency")]
-    [JsonProperty("currency")]
-    public string Currency { get; set; } = "USD";
-
-    /// <summary>
     /// Category of the expense (Meals, Travel, Office, etc.).
     /// </summary>
     [JsonPropertyName("category")]

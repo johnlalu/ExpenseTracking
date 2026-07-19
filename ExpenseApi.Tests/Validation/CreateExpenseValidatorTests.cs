@@ -11,7 +11,6 @@ public class CreateExpenseValidatorTests
     {
         Description = "Coffee",
         Amount = 5.00m,
-        Currency = "USD",
         Category = "Food",
         PurchaseDate = DateTime.UtcNow.AddHours(-1)
     };
@@ -73,34 +72,6 @@ public class CreateExpenseValidatorTests
 
         Assert.False(result.IsValid);
         Assert.Contains(result.Errors, e => e.PropertyName == nameof(request.Amount));
-    }
-
-    [Theory]
-    [InlineData("")]
-    [InlineData(null)]
-    public void Validate_Fails_WhenCurrencyEmpty(string? currency)
-    {
-        var request = ValidRequest();
-        request.Currency = currency;
-
-        var result = _validator.Validate(request);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.PropertyName == nameof(request.Currency));
-    }
-
-    [Theory]
-    [InlineData("US")]
-    [InlineData("USDD")]
-    public void Validate_Fails_WhenCurrencyNotThreeChars(string currency)
-    {
-        var request = ValidRequest();
-        request.Currency = currency;
-
-        var result = _validator.Validate(request);
-
-        Assert.False(result.IsValid);
-        Assert.Contains(result.Errors, e => e.PropertyName == nameof(request.Currency));
     }
 
     [Theory]

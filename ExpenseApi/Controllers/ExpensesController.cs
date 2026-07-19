@@ -52,7 +52,6 @@ public class ExpensesController : BaseController
                 UserId = userId,
                 Description = request.Description,
                 Amount = request.Amount,
-                Currency = request.Currency ?? "USD",
                 Category = request.Category,
                 PurchaseDate = request.PurchaseDate,
                 ReceiptUrl = request.ReceiptUrl,

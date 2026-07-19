@@ -48,10 +48,10 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
   expenses: Expense[] = [];
   isLoading = false;
   selectedMonth = new Date();
-  paidFilter: PaidFilter = 'both';
+  paidFilter: PaidFilter = 'unpaid';
   destroy$ = new Subject<void>();
 
-  displayedColumns: string[] = ['date', 'category', 'description', 'amount', 'currency', 'actions', 'paid'];
+  displayedColumns: string[] = ['date', 'category', 'description', 'amount', 'actions', 'paid'];
 
   constructor(
     private expenseService: ExpenseService,
@@ -126,7 +126,6 @@ export class ExpenseListComponent implements OnInit, OnDestroy {
     const request: CreateExpenseRequest = {
       description: expense.description,
       amount: expense.amount,
-      currency: expense.currency,
       category: expense.category,
       purchaseDate: expense.purchaseDate,
       paid

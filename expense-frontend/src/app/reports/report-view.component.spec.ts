@@ -13,9 +13,9 @@ describe('ReportViewComponent', () => {
   let errorService: { handleHttpError: ReturnType<typeof vi.fn>; setError: ReturnType<typeof vi.fn> };
 
   const mockExpenses: Expense[] = [
-    { id: '1', description: 'Grocery shopping', amount: 400, currency: 'USD', category: 'Groceries', purchaseDate: new Date() },
-    { id: '2', description: 'Movie', amount: 15, currency: 'USD', category: 'Entertainment', purchaseDate: new Date() },
-    { id: '3', description: 'More groceries', amount: 100, currency: 'USD', category: 'Groceries', purchaseDate: new Date() }
+    { id: '1', description: 'Grocery shopping', amount: 400, category: 'Groceries', purchaseDate: new Date() },
+    { id: '2', description: 'Movie', amount: 15, category: 'Entertainment', purchaseDate: new Date() },
+    { id: '3', description: 'More groceries', amount: 100, category: 'Groceries', purchaseDate: new Date() }
   ];
 
   const mockResponse: ExpenseListResponse = { items: mockExpenses, totalCount: 3, pageSize: 50 };

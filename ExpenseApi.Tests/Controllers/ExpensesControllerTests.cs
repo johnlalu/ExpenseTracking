@@ -28,7 +28,7 @@ public class ExpensesControllerTests
     {
         var expenses = new List<Expense>
         {
-            new() { Id = "e1", UserId = "user-123", Amount = 50m, Currency = "USD" }
+            new() { Id = "e1", UserId = "user-123", Amount = 50m }
         };
         _repo.Setup(r => r.GetByMonthYearAsync("user-123", 6, 2026)).ReturnsAsync(expenses);
 
@@ -116,7 +116,6 @@ public class ExpensesControllerTests
         {
             Description = "Lunch",
             Amount = 12.50m,
-            Currency = "USD",
             Category = "Food",
             PurchaseDate = DateTime.UtcNow.AddDays(-1)
         };
@@ -133,7 +132,7 @@ public class ExpensesControllerTests
     [Fact]
     public async Task CreateExpense_ReturnsUnauthorized_WhenNoUserClaim()
     {
-        var request = new CreateExpenseRequest { Amount = 10m, Currency = "USD" };
+        var request = new CreateExpenseRequest { Amount = 10m };
 
         var result = await CreateSut(userId: null).CreateExpense(request);
 
@@ -145,7 +144,7 @@ public class ExpensesControllerTests
     {
         _repo.Setup(r => r.CreateAsync(It.IsAny<Expense>()))
              .ThrowsAsync(new Exception("Cosmos error"));
-        var request = new CreateExpenseRequest { Amount = 10m, Currency = "USD" };
+        var request = new CreateExpenseRequest { Amount = 10m };
 
         var result = await CreateSut().CreateExpense(request);
 
@@ -157,8 +156,8 @@ public class ExpensesControllerTests
     [Fact]
     public async Task UpdateExpense_ReturnsOk_WhenFound()
     {
-        var existing = new Expense { Id = "e-1", UserId = "user-123", Amount = 10m, Currency = "USD" };
-        var updated = new Expense { Id = "e-1", UserId = "user-123", Amount = 20m, Currency = "USD" };
+        var existing = new Expense { Id = "e-1", UserId = "user-123", Amount = 10m };
+        var updated = new Expense { Id = "e-1", UserId = "user-123", Amount = 20m };
         var request = new UpdateExpenseRequest { Amount = 20m };
 
         _repo.Setup(r => r.GetByIdAsync("e-1", "user-123")).ReturnsAsync(existing);
