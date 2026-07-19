@@ -59,6 +59,10 @@ describe('ExpenseFormComponent', () => {
       expect(component.expenseForm.get('source')).toBeNull();
     });
 
+    it('should not have a currency control', () => {
+      expect(component.expenseForm.get('currency')).toBeNull();
+    });
+
     it('should have required fields', () => {
       expect(component.expenseForm.get('description')).toBeTruthy();
       expect(component.expenseForm.get('amount')).toBeTruthy();
